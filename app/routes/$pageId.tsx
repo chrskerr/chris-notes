@@ -66,6 +66,8 @@ export default function Page() {
 		}).then(refetch);
 	}
 
+	const url = `https://notes.chriskerr.dev/${params.pageId}`;
+
 	return (
 		<div className="flex flex-col h-screen max-w-4xl p-8 mx-auto">
 			<h1 className="pb-8 text-4xl">Notes:</h1>
@@ -82,6 +84,18 @@ export default function Page() {
 			<div onClick={handleAdd} className="mt-2 cursor-pointer">
 				<span className="mr-2">+</span>
 				<span className="hover:underline">Add category</span>
+			</div>
+
+			<div className="mt-12 text-sm">
+				<span>Permanant url: </span>
+				<a
+					href={url}
+					target="_blank"
+					rel="noreferrer"
+					className="text-green-500 underline transition-colors hover:text-green-700"
+				>
+					{url}
+				</a>
 			</div>
 		</div>
 	);

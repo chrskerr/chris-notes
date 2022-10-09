@@ -577,6 +577,10 @@ video {
   margin-right: 0.5rem;
 }
 
+.mt-12 {
+  margin-top: 3rem;
+}
+
 .flex {
   display: flex;
 }
@@ -644,16 +648,12 @@ video {
   padding-left: 1rem;
 }
 
-.pb-8 {
-  padding-bottom: 2rem;
-}
-
-.pl-5 {
-  padding-left: 1.25rem;
-}
-
 .pl-\[17px\] {
   padding-left: 17px;
+}
+
+.pb-8 {
+  padding-bottom: 2rem;
 }
 
 .font-mono {
@@ -670,9 +670,23 @@ video {
   line-height: 2.5rem;
 }
 
+.text-sm {
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+}
+
 .text-red-500 {
   --tw-text-opacity: 1;
   color: rgb(239 68 68 / var(--tw-text-opacity));
+}
+
+.text-green-500 {
+  --tw-text-opacity: 1;
+  color: rgb(34 197 94 / var(--tw-text-opacity));
+}
+
+.underline {
+  text-decoration-line: underline;
 }
 
 .outline-none {
@@ -696,13 +710,13 @@ video {
   background-color: rgb(241 245 249 / var(--tw-bg-opacity));
 }
 
-.hover\:underline:hover {
-  text-decoration-line: underline;
+.hover\:text-green-700:hover {
+  --tw-text-opacity: 1;
+  color: rgb(21 128 61 / var(--tw-text-opacity));
 }
 
-.focus\:bg-slate-100:focus {
-  --tw-bg-opacity: 1;
-  background-color: rgb(241 245 249 / var(--tw-bg-opacity));
+.hover\:underline:hover {
+  text-decoration-line: underline;
 }
 
 .\[\&\:has\(\*\:focus\)\]\:bg-slate-100:has(*:focus) {
