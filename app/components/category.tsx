@@ -92,7 +92,7 @@ export function Category({ category, refetch }: Props) {
 			className={`p-1 pl-4 mb-4 border border-dashed rounded ${
 				isDraggedOver ? 'border-black' : ''
 			}`}
-			open={true}
+			open={!isDoneCategory}
 			onDragEnter={handleDragOver}
 			onDragOver={handleDragOver}
 			onDragLeave={() => setIsDraggedOver(false)}
@@ -100,8 +100,8 @@ export function Category({ category, refetch }: Props) {
 		>
 			<summary className="flex items-center">
 				<span
-					className="flex-1 px-4 py-2 text-xl transition-colors rounded hover:bg-slate-100"
-					contentEditable
+					className="flex-1 px-4 py-2 text-xl transition-colors rounded outline-none hover:bg-slate-100 focus:bg-slate-100"
+					contentEditable={!isDoneCategory}
 					suppressContentEditableWarning
 					onInput={e => setTitleContent(e.currentTarget.innerText)}
 					onKeyDown={handleKeyDown}

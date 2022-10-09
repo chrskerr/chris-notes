@@ -10,6 +10,12 @@ datasource db {
     url      = env("DATABASE_URL")
 }
 
+model Page {
+    id String @id @default(cuid())
+
+    categories Category[]
+}
+
 model Note {
     id      String @id @default(cuid())
     content String @default("New note")
@@ -26,6 +32,9 @@ model Note {
 model Category {
     id    String @id @default(cuid())
     title String @default("New category")
+
+    pageId String?
+    page   Page?   @relation(fields: [pageId], references: [id], onDelete: Cascade)
 
     createdAt DateTime @default(now())
     updatedAt DateTime @default(now()) @updatedAt

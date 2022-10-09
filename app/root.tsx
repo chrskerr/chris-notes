@@ -45,7 +45,7 @@ export default function App() {
 				/>
 				<link rel="manifest" href="/site.webmanifest" />
 			</head>
-			<body>
+			<body className="font-mono">
 				<Outlet />
 				<ScrollRestoration />
 				<Scripts />

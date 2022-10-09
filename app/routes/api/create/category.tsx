@@ -1,17 +1,20 @@
 import type { ActionFunction } from '@remix-run/node';
 
-import { getUserCookie } from '~/utils/cookies.server';
 import { db } from '~/utils/db.server';
 
-export interface IMarkBookRead {
-	bookId: string;
-	isRead: boolean;
-}
-
 export const action: ActionFunction = async ({ request }) => {
-	const { isAuthenticated } = await getUserCookie(request);
-	if (!isAuthenticated) return null;
+	const body: { pageId?: string } = await request.json();
+	if (!body.pageId) return null;
 
-	const category = await db.category.create({ data: {} });
+	const category = await db.category.create({
+		data: {
+			page: {
+				connectOrCreate: {
+					where: { id: body.pageId },
+					create: { id: body.pageId },
+				},
+			},
+		},
+	});
 	return category.id;
 };

@@ -69,7 +69,7 @@ export function Note({ note, refetch }: Props) {
 
 	return (
 		<div
-			className={`flex items-center px-4 py-2 transition-colors rounded hover:bg-slate-100 `}
+			className={`flex items-center px-4 py-2 transition-colors rounded hover:bg-slate-100 [&:has(*:focus)]:bg-slate-100`}
 			onDragStart={handleDrag}
 			draggable={!completedAt}
 		>
@@ -79,7 +79,7 @@ export function Note({ note, refetch }: Props) {
 				onChange={e => handleToggle(e.target.checked)}
 			/>
 			<span
-				className="flex-1 mx-4"
+				className="flex-1 mx-4 outline-none"
 				contentEditable
 				suppressContentEditableWarning
 				onInput={e => setTextContent(e.currentTarget.innerText)}
