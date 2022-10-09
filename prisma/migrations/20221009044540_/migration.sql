@@ -1,0 +1,18 @@
+-- CreateTable
+CREATE TABLE "Note" (
+    "id" TEXT NOT NULL PRIMARY KEY,
+    "content" TEXT NOT NULL DEFAULT 'New note',
+    "categoryId" TEXT NOT NULL,
+    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "completedAt" DATETIME,
+    CONSTRAINT "Note_categoryId_fkey" FOREIGN KEY ("categoryId") REFERENCES "Category" ("id") ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+-- CreateTable
+CREATE TABLE "Category" (
+    "id" TEXT NOT NULL PRIMARY KEY,
+    "title" TEXT NOT NULL DEFAULT 'New category',
+    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
