@@ -82,6 +82,7 @@ export function Note({ note, refetch }: Props) {
 				className="flex-1 mx-4 outline-none"
 				contentEditable
 				suppressContentEditableWarning
+				spellCheck
 				onInput={e => setTextContent(e.currentTarget.innerText)}
 				onKeyDown={handleKeyDown}
 			>

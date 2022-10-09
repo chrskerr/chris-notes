@@ -36,6 +36,12 @@ const handleKeyDown: KeyboardEventHandler<HTMLSpanElement> = e => {
 	}
 };
 
+const handleKeyUp: KeyboardEventHandler<HTMLSpanElement> = e => {
+	if (e.key === ' ') {
+		e.preventDefault();
+	}
+};
+
 export function Category({ category, refetch }: Props) {
 	const { id, title, notes } = category;
 
@@ -114,24 +120,30 @@ export function Category({ category, refetch }: Props) {
 			onDrop={handleDrop}
 		>
 			<summary className="flex items-center">
-				<span
-					className="flex-1 px-4 py-2 text-xl transition-colors rounded outline-none hover:bg-slate-100 focus:bg-slate-100"
-					contentEditable={!isDoneCategory}
-					suppressContentEditableWarning
-					onInput={e => setTitleContent(e.currentTarget.innerText)}
-					onKeyDown={handleKeyDown}
-					onClick={e => e.preventDefault()}
-				>
-					{title}
-				</span>
-				<span
-					onClick={handleDelete}
-					className="mr-4 text-red-500 cursor-pointer"
-				>
-					x
-				</span>
+				<div className="flex items-center flex-1 transition-colors rounded hover:bg-slate-100 [&:has(*:focus)]:bg-slate-100">
+					<span
+						className="flex-1 px-4 py-2 text-xl outline-none"
+						contentEditable={!isDoneCategory}
+						suppressContentEditableWarning
+						spellCheck
+						onInput={e =>
+							setTitleContent(e.currentTarget.innerText)
+						}
+						onKeyDown={handleKeyDown}
+						onKeyUp={handleKeyUp}
+						onClick={e => e.preventDefault()}
+					>
+						{title}
+					</span>
+					<span
+						onClick={handleDelete}
+						className="mr-4 text-red-500 cursor-pointer"
+					>
+						x
+					</span>
+				</div>
 			</summary>
-			<div className="pl-4">
+			<div className="pl-[17px]">
 				{notes.map(note => (
 					<Note
 						key={note.id}
@@ -151,7 +163,7 @@ export function Category({ category, refetch }: Props) {
 					className="px-4 py-2 mt-2 transition-colors rounded cursor-pointer hover:bg-slate-100"
 				>
 					<span className="mr-2">+</span>
-					<span className="hover:underline">Add new note</span>
+					<span>Add new note</span>
 				</div>
 			)}
 		</details>
