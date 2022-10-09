@@ -9,6 +9,7 @@ import { db } from '~/utils/db.server';
 type CategorisedNotes = {
 	id: string;
 	title: string;
+	isOpen: boolean;
 	notes: {
 		id: string;
 		content: string;
@@ -21,7 +22,10 @@ export const loader: LoaderFunction = async ({ request, params }) => {
 	if (!pageId) return redirect('/');
 
 	const data = await db.category.findMany({
-		include: {
+		select: {
+			id: true,
+			title: true,
+			isOpen: true,
 			notes: {
 				where: { completedAt: null },
 				select: { id: true, content: true, completedAt: true },
@@ -33,13 +37,13 @@ export const loader: LoaderFunction = async ({ request, params }) => {
 	});
 
 	const completedNotes = await db.note.findMany({
-		where: { completedAt: { not: null } },
+		where: { completedAt: { not: null }, category: { pageId } },
 		select: { id: true, content: true, completedAt: true },
 	});
 
 	return json<CategorisedNotes[]>([
 		...data,
-		{ id: 'done', title: 'Done', notes: completedNotes },
+		{ id: 'done', title: 'Done', isOpen: false, notes: completedNotes },
 	]);
 };
 

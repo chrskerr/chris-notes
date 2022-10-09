@@ -1,12 +1,17 @@
 import { Note } from './note';
 import debounce from 'lodash/debounce';
-import type { DragEventHandler, KeyboardEventHandler } from 'react';
+import type {
+	DragEventHandler,
+	KeyboardEventHandler,
+	MouseEventHandler,
+} from 'react';
 import { useEffect, useState } from 'react';
 
 interface Props {
 	category: {
 		id: string;
 		title: string;
+		isOpen: boolean;
 		notes: {
 			id: string;
 			content: string;
@@ -87,12 +92,22 @@ export function Category({ category, refetch }: Props) {
 		}
 	}
 
+	const handleToggle: MouseEventHandler<HTMLDetailsElement> = e => {
+		if (isDoneCategory) return;
+		fetch('/api/edit/category', {
+			method: 'post',
+			body: JSON.stringify({ id, isOpen: e.currentTarget.open }),
+			credentials: 'include',
+		});
+	};
+
 	return (
 		<details
 			className={`p-1 pl-4 mb-4 border border-dashed rounded ${
 				isDraggedOver ? 'border-black' : ''
 			}`}
-			open={!isDoneCategory}
+			open={category.isOpen}
+			onToggle={handleToggle}
 			onDragEnter={handleDragOver}
 			onDragOver={handleDragOver}
 			onDragLeave={() => setIsDraggedOver(false)}
