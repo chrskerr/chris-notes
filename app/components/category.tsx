@@ -5,8 +5,8 @@ import type {
 	KeyboardEventHandler,
 	MouseEventHandler,
 } from 'react';
+import { memo } from 'react';
 import { useEffect, useState } from 'react';
-import { doneId } from '~/routes/$pageId';
 
 interface Props {
 	category: {
@@ -43,13 +43,11 @@ const handleKeyUp: KeyboardEventHandler<HTMLSpanElement> = e => {
 	}
 };
 
-export function Category({ category, refetch }: Props) {
+export const Category = memo(function Category({ category, refetch }: Props) {
 	const { id, title, notes } = category;
 
 	const [titleContent, setTitleContent] = useState(title);
 	const [isDraggedOver, setIsDraggedOver] = useState(false);
-
-	const isDoneCategory = id === doneId;
 
 	useEffect(() => {
 		setTitleContent(title);
@@ -70,14 +68,12 @@ export function Category({ category, refetch }: Props) {
 	}
 
 	const handleDragOver: DragEventHandler<HTMLDetailsElement> = e => {
-		if (isDoneCategory) return;
 		e.preventDefault();
 		setIsDraggedOver(true);
 	};
 
 	const handleDrop: DragEventHandler<HTMLDetailsElement> = e => {
 		setIsDraggedOver(false);
-		if (isDoneCategory) return;
 		const noteId = e.dataTransfer.getData('text/plain');
 		fetch('/api/edit/note', {
 			method: 'post',
@@ -100,7 +96,6 @@ export function Category({ category, refetch }: Props) {
 	}
 
 	const handleToggle: MouseEventHandler<HTMLDetailsElement> = e => {
-		if (isDoneCategory) return;
 		fetch('/api/edit/category', {
 			method: 'post',
 			body: JSON.stringify({ id, isOpen: e.currentTarget.open }),
@@ -110,7 +105,7 @@ export function Category({ category, refetch }: Props) {
 
 	return (
 		<details
-			className={`p-1 pl-4 mb-4 border border-dashed rounded ${
+			className={`p-1 pl-4 mb-4 border border-dashed rounded transition-color ${
 				isDraggedOver ? 'border-black' : ''
 			}`}
 			open={category.isOpen}
@@ -121,10 +116,10 @@ export function Category({ category, refetch }: Props) {
 			onDrop={handleDrop}
 		>
 			<summary className="flex items-center">
-				<div className="flex items-center flex-1 transition-colors rounded hover:bg-slate-100 [&:has(*:focus)]:bg-slate-100">
+				<div className="flex items-center flex-1 stransition-color rounded hover:bg-slate-100 [&:has(*:focus)]:bg-slate-100">
 					<span
 						className="flex-1 px-4 py-2 text-xl outline-none"
-						contentEditable={!isDoneCategory}
+						contentEditable
 						suppressContentEditableWarning
 						spellCheck
 						onInput={e =>
@@ -136,14 +131,12 @@ export function Category({ category, refetch }: Props) {
 					>
 						{title}
 					</span>
-					{!isDoneCategory && (
-						<span
-							onClick={handleDelete}
-							className="mr-4 text-red-500 cursor-pointer"
-						>
-							x
-						</span>
-					)}
+					<span
+						onClick={handleDelete}
+						className="mr-4 text-red-500 cursor-pointer"
+					>
+						x
+					</span>
 				</div>
 			</summary>
 			<div className="pl-[17px]">
@@ -160,15 +153,13 @@ export function Category({ category, refetch }: Props) {
 					/>
 				))}
 			</div>
-			{!isDoneCategory && (
-				<div
-					onClick={handleAdd}
-					className="px-4 py-2 mt-2 transition-colors rounded cursor-pointer hover:bg-slate-100"
-				>
-					<span className="mr-2">+</span>
-					<span>Add new note</span>
-				</div>
-			)}
+			<div
+				onClick={handleAdd}
+				className="px-4 py-2 mt-2 transition-colors rounded cursor-pointer hover:bg-slate-100"
+			>
+				<span className="mr-2">+</span>
+				<span>Add new note</span>
+			</div>
 		</details>
 	);
-}
+});
