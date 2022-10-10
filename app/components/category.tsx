@@ -6,6 +6,7 @@ import type {
 	MouseEventHandler,
 } from 'react';
 import { useEffect, useState } from 'react';
+import { doneId } from '~/routes/$pageId';
 
 interface Props {
 	category: {
@@ -48,7 +49,7 @@ export function Category({ category, refetch }: Props) {
 	const [titleContent, setTitleContent] = useState(title);
 	const [isDraggedOver, setIsDraggedOver] = useState(false);
 
-	const isDoneCategory = id === 'done';
+	const isDoneCategory = id === doneId;
 
 	useEffect(() => {
 		setTitleContent(title);
@@ -135,12 +136,14 @@ export function Category({ category, refetch }: Props) {
 					>
 						{title}
 					</span>
-					<span
-						onClick={handleDelete}
-						className="mr-4 text-red-500 cursor-pointer"
-					>
-						x
-					</span>
+					{!isDoneCategory && (
+						<span
+							onClick={handleDelete}
+							className="mr-4 text-red-500 cursor-pointer"
+						>
+							x
+						</span>
+					)}
 				</div>
 			</summary>
 			<div className="pl-[17px]">
