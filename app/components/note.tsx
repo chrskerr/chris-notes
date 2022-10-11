@@ -2,22 +2,27 @@ import type { DragEventHandler, KeyboardEventHandler } from 'react';
 import { useEffect, useState } from 'react';
 import debounce from 'lodash/debounce';
 
+export type UINote = {
+	id: string;
+	content: string;
+	completedAt: string | null;
+};
+
 interface Props {
-	note: {
-		id: string;
-		content: string;
-		completedAt: Date | null;
-	};
+	note: UINote;
 	refetch: () => void;
 }
 
-const debouncedHandleSave = debounce((id: string, newContent: string): void => {
-	fetch('/api/edit/note', {
-		method: 'post',
-		body: JSON.stringify({ id, content: newContent }),
-		credentials: 'include',
-	});
-}, 200);
+const debouncedHandleSave = debounce(
+	(id: string, newContent: string, callback: () => void): void => {
+		fetch('/api/edit/note', {
+			method: 'post',
+			body: JSON.stringify({ id, content: newContent }),
+			credentials: 'include',
+		}).then(callback);
+	},
+	200,
+);
 
 const handleKeyDown: KeyboardEventHandler<HTMLSpanElement> = e => {
 	if (['Enter', 'Escape'].includes(e.key)) {
@@ -36,7 +41,7 @@ export function Note({ note, refetch }: Props) {
 
 	useEffect(() => {
 		if (textContent !== content) {
-			debouncedHandleSave(id, textContent);
+			debouncedHandleSave(id, textContent, refetch);
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [textContent]);

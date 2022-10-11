@@ -1,3 +1,4 @@
+import type { UINote } from './note';
 import { Note } from './note';
 import debounce from 'lodash/debounce';
 import type {
@@ -13,22 +14,21 @@ interface Props {
 		id: string;
 		title: string;
 		isOpen: boolean;
-		notes: {
-			id: string;
-			content: string;
-			completedAt: Date | string | null;
-		}[];
+		notes: UINote[];
 	};
 	refetch: () => void;
 }
 
-const debouncedHandleSave = debounce((id: string, newTitle: string): void => {
-	fetch('/api/edit/category', {
-		method: 'post',
-		body: JSON.stringify({ id, title: newTitle }),
-		credentials: 'include',
-	});
-}, 200);
+const debouncedHandleSave = debounce(
+	(id: string, newTitle: string, callback: () => void): void => {
+		fetch('/api/edit/category', {
+			method: 'post',
+			body: JSON.stringify({ id, title: newTitle }),
+			credentials: 'include',
+		}).then(callback);
+	},
+	500,
+);
 
 const handleKeyDown: KeyboardEventHandler<HTMLSpanElement> = e => {
 	if (['Enter', 'Escape'].includes(e.key)) {
@@ -55,7 +55,7 @@ export const Category = memo(function Category({ category, refetch }: Props) {
 
 	useEffect(() => {
 		if (titleContent !== title) {
-			debouncedHandleSave(id, titleContent);
+			debouncedHandleSave(id, titleContent, refetch);
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [titleContent]);
@@ -141,16 +141,7 @@ export const Category = memo(function Category({ category, refetch }: Props) {
 			</summary>
 			<div className="pl-[17px]">
 				{notes.map(note => (
-					<Note
-						key={note.id}
-						note={{
-							...note,
-							completedAt: note.completedAt
-								? new Date(note.completedAt)
-								: null,
-						}}
-						refetch={refetch}
-					/>
+					<Note key={note.id} note={note} refetch={refetch} />
 				))}
 			</div>
 			<div
