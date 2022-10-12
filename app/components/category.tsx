@@ -20,16 +20,15 @@ interface Props {
 	refetch: () => void;
 }
 
-const debouncedHandleSave = debounce(
-	(id: string, newTitle: string, callback: () => void): void => {
-		fetch('/api/edit/category', {
-			method: 'post',
-			body: JSON.stringify({ id, title: newTitle }),
-			credentials: 'include',
-		}).then(callback);
-	},
-	500,
-);
+function handleSave(id: string, newTitle: string) {
+	return fetch('/api/edit/category', {
+		method: 'post',
+		body: JSON.stringify({ id, title: newTitle }),
+		credentials: 'include',
+	});
+}
+
+const debouncedHandleSave = debounce(handleSave, 200);
 
 const handleKeyDown: KeyboardEventHandler<HTMLSpanElement> = e => {
 	if (['Enter', 'Escape'].includes(e.key)) {
@@ -57,7 +56,7 @@ export const Category = memo(
 
 		useEffect(() => {
 			if (titleContent !== title) {
-				debouncedHandleSave(id, titleContent, refetch);
+				debouncedHandleSave(id, titleContent);
 			}
 			// eslint-disable-next-line react-hooks/exhaustive-deps
 		}, [titleContent]);
@@ -130,6 +129,11 @@ export const Category = memo(
 							onKeyDown={handleKeyDown}
 							onKeyUp={handleKeyUp}
 							onClick={e => e.preventDefault()}
+							onBlur={e =>
+								handleSave(id, e.currentTarget.innerText).then(
+									refetch,
+								)
+							}
 						>
 							{title}
 						</span>

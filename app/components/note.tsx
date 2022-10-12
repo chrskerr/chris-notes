@@ -13,16 +13,15 @@ interface Props {
 	refetch: () => void;
 }
 
-const debouncedHandleSave = debounce(
-	(id: string, newContent: string, callback: () => void): void => {
-		fetch('/api/edit/note', {
-			method: 'post',
-			body: JSON.stringify({ id, content: newContent }),
-			credentials: 'include',
-		}).then(callback);
-	},
-	200,
-);
+function handleSave(id: string, newContent: string) {
+	return fetch('/api/edit/note', {
+		method: 'post',
+		body: JSON.stringify({ id, content: newContent }),
+		credentials: 'include',
+	});
+}
+
+const debouncedHandleSave = debounce(handleSave, 200);
 
 const handleKeyDown: KeyboardEventHandler<HTMLSpanElement> = e => {
 	if (['Enter', 'Escape'].includes(e.key)) {
@@ -41,7 +40,7 @@ export function Note({ note, refetch }: Props) {
 
 	useEffect(() => {
 		if (textContent !== content) {
-			debouncedHandleSave(id, textContent, refetch);
+			debouncedHandleSave(id, textContent);
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [textContent]);
@@ -90,6 +89,9 @@ export function Note({ note, refetch }: Props) {
 				spellCheck
 				onInput={e => setTextContent(e.currentTarget.innerText)}
 				onKeyDown={handleKeyDown}
+				onBlur={e =>
+					handleSave(id, e.currentTarget.innerText).then(refetch)
+				}
 			>
 				{content}
 			</span>
