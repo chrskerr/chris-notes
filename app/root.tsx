@@ -44,6 +44,16 @@ export default function App() {
 					href="/favicon-16x16.png"
 				/>
 				<link rel="manifest" href="/site.webmanifest" />
+				<link rel="preconnect" href="https://fonts.googleapis.com" />
+				<link
+					rel="preconnect"
+					href="https://fonts.gstatic.com"
+					crossOrigin="anonymous"
+				/>
+				<link
+					href="https://fonts.googleapis.com/css2?family=Red+Hat+Mono&display=swap"
+					rel="stylesheet"
+				/>
 			</head>
 			<body className="font-mono">
 				<Outlet />

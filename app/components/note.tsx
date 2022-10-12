@@ -17,11 +17,10 @@ function handleSave(id: string, newContent: string) {
 	return fetch('/api/edit/note', {
 		method: 'post',
 		body: JSON.stringify({ id, content: newContent }),
-		credentials: 'include',
 	});
 }
 
-const debouncedHandleSave = debounce(handleSave, 200);
+const debouncedHandleSave = debounce(handleSave, 5_000);
 
 const handleKeyDown: KeyboardEventHandler<HTMLSpanElement> = e => {
 	if (['Enter', 'Escape'].includes(e.key)) {
@@ -53,7 +52,6 @@ export function Note({ note, refetch }: Props) {
 			fetch('/api/delete/note', {
 				method: 'post',
 				body: JSON.stringify({ id }),
-				credentials: 'include',
 			}).then(refetch);
 		}
 	}
@@ -62,7 +60,6 @@ export function Note({ note, refetch }: Props) {
 		fetch('/api/edit/note', {
 			method: 'post',
 			body: JSON.stringify({ id, isComplete }),
-			credentials: 'include',
 		}).then(refetch);
 	}
 

@@ -24,11 +24,10 @@ function handleSave(id: string, newTitle: string) {
 	return fetch('/api/edit/category', {
 		method: 'post',
 		body: JSON.stringify({ id, title: newTitle }),
-		credentials: 'include',
 	});
 }
 
-const debouncedHandleSave = debounce(handleSave, 200);
+const debouncedHandleSave = debounce(handleSave, 5_000);
 
 const handleKeyDown: KeyboardEventHandler<HTMLSpanElement> = e => {
 	if (['Enter', 'Escape'].includes(e.key)) {
@@ -79,7 +78,6 @@ export const Category = memo(
 			fetch('/api/edit/note', {
 				method: 'post',
 				body: JSON.stringify({ id: noteId, categoryId: id }),
-				credentials: 'include',
 			}).then(refetch);
 		};
 
@@ -91,7 +89,6 @@ export const Category = memo(
 				fetch('/api/delete/category', {
 					method: 'post',
 					body: JSON.stringify({ id }),
-					credentials: 'include',
 				}).then(refetch);
 			}
 		}
@@ -100,7 +97,6 @@ export const Category = memo(
 			fetch('/api/edit/category', {
 				method: 'post',
 				body: JSON.stringify({ id, isOpen: e.currentTarget.open }),
-				credentials: 'include',
 			});
 		};
 

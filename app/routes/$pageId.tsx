@@ -100,7 +100,7 @@ export default function Page() {
 	function handleAdd() {
 		fetch('/api/create/category', {
 			method: 'post',
-			credentials: 'include',
+
 			body: JSON.stringify({ pageId: params.pageId }),
 		}).then(refetch);
 	}
