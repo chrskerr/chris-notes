@@ -617,10 +617,6 @@ video {
   align-items: center;
 }
 
-.break-all {
-  word-break: break-all;
-}
-
 .rounded {
   border-radius: 0.25rem;
 }
@@ -727,6 +723,10 @@ video {
   transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
   transition-duration: 150ms;
+}
+
+.word-break {
+  word-break: break-word;
 }
 
 .hover\:bg-slate-100:hover {
