@@ -80,7 +80,7 @@ export function Note({ note, refetch }: Props) {
 				onChange={e => handleToggle(e.target.checked)}
 			/>
 			<span
-				className="flex-1 mx-4 outline-none"
+				className="flex-1 mx-4 break-all outline-none"
 				contentEditable
 				suppressContentEditableWarning
 				spellCheck

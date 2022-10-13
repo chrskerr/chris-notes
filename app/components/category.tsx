@@ -115,7 +115,7 @@ export const Category = memo(
 				<summary className="flex items-center">
 					<div className="flex items-center flex-1 stransition-color rounded hover:bg-slate-100 [&:has(*:focus)]:bg-slate-100">
 						<span
-							className="flex-1 px-4 py-2 text-xl outline-none"
+							className="flex-1 px-4 py-2 text-xl break-all outline-none"
 							contentEditable
 							suppressContentEditableWarning
 							spellCheck
