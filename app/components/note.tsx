@@ -65,7 +65,9 @@ export function Note({ note, refetch }: Props) {
 
 	const handleDrag: DragEventHandler<HTMLDivElement> = e => {
 		e.dataTransfer.effectAllowed = 'move';
-		e.dataTransfer.setData('text/plain', id);
+		e.dataTransfer.setData('note', id);
+
+		e.stopPropagation();
 	};
 
 	return (

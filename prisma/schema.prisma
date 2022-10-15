@@ -33,6 +33,7 @@ model Category {
     id     String  @id @default(cuid())
     title  String  @default("New category")
     isOpen Boolean @default(true)
+    order  Int?
 
     pageId String?
     page   Page?   @relation(fields: [pageId], references: [id], onDelete: Cascade)

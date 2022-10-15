@@ -4,6 +4,7 @@ import { json } from '@remix-run/node';
 import { useFetcher, useLoaderData, useParams } from '@remix-run/react';
 
 import { useCallback, useEffect, useRef } from 'react';
+import { Categories } from '~/components/categories';
 
 import { Category } from '~/components/category';
 import { Done } from '~/components/done';
@@ -20,6 +21,8 @@ type CategorisedNotes = {
 		id: string;
 		title: string;
 		isOpen: boolean;
+		order: number | null;
+		createdAt: Date;
 		notes: NoteType[];
 	}>;
 	done: NoteType[];
@@ -35,6 +38,8 @@ export const loader: LoaderFunction = async ({ request, params }) => {
 				id: true,
 				title: true,
 				isOpen: true,
+				order: true,
+				createdAt: true,
 				notes: {
 					where: { completedAt: null },
 					select: { id: true, content: true, completedAt: true },
@@ -105,7 +110,7 @@ export default function Page() {
 		}).then(refetch);
 	}
 
-	const url = `https://notes.chriskerr.dev/${params.pageId}`;
+	const url = `https://tasks.chriskerr.dev/${params.pageId}`;
 
 	useEffect(() => {
 		pageId.current = params.pageId;
@@ -125,17 +130,9 @@ export default function Page() {
 
 	return (
 		<div className="flex flex-col h-screen max-w-4xl p-8 mx-auto">
-			<h1 className="pb-8 text-4xl">Notes</h1>
+			<h1 className="pb-8 text-4xl">Tasks</h1>
 
-			{data.categories &&
-				data.categories.map(category => (
-					<Category
-						key={category.id}
-						category={category}
-						refetch={refetch}
-					/>
-				))}
-
+			<Categories categories={data.categories} refetch={refetch} />
 			<Done data={data.done} refetch={refetch} />
 
 			<div onClick={handleAdd} className="mt-12 cursor-pointer">

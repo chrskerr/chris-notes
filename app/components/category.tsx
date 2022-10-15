@@ -68,16 +68,20 @@ export const Category = memo(
 		}
 
 		const handleDragOver: DragEventHandler<HTMLDetailsElement> = e => {
+			if (e.dataTransfer.types.includes('note')) {
+				setIsDraggedOver(true);
+			}
 			e.preventDefault();
-			setIsDraggedOver(true);
 		};
 
 		const handleDrop: DragEventHandler<HTMLDetailsElement> = e => {
 			setIsDraggedOver(false);
-			const noteId = e.dataTransfer.getData('text/plain');
+			const droppedId = e.dataTransfer.getData('note');
+			if (!droppedId) return;
+
 			fetch('/api/edit/note', {
 				method: 'post',
-				body: JSON.stringify({ id: noteId, categoryId: id }),
+				body: JSON.stringify({ id: droppedId, categoryId: id }),
 			}).then(refetch);
 		};
 
@@ -100,9 +104,14 @@ export const Category = memo(
 			});
 		};
 
+		const handleDrag: DragEventHandler<HTMLDetailsElement> = e => {
+			e.dataTransfer.effectAllowed = 'move';
+			e.dataTransfer.setData('category', id);
+		};
+
 		return (
 			<details
-				className={`p-1 pl-4 mb-4 border border-dashed rounded transition-color ${
+				className={`p-1 pl-4 border border-dashed rounded transition-color ${
 					isDraggedOver ? 'border-black' : ''
 				}`}
 				open={category.isOpen}
@@ -111,6 +120,8 @@ export const Category = memo(
 				onDragOver={handleDragOver}
 				onDragLeave={() => setIsDraggedOver(false)}
 				onDrop={handleDrop}
+				draggable
+				onDragStart={handleDrag}
 			>
 				<summary className="flex items-center">
 					<div className="flex items-center flex-1 stransition-color rounded hover:bg-slate-100 [&:has(*:focus)]:bg-slate-100">
