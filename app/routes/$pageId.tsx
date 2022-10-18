@@ -8,21 +8,25 @@ export default function Page() {
 
 	const url = `https://tasks.chriskerr.dev/${params.pageId}`;
 
+	const linkStyles = 'text-3xl hover:text-blue-500 transition-colors';
+	const selectedStyles =
+		'underline underline-offset-8 decoration-wavy text-blue-500';
+
 	return (
 		<div className="flex flex-col h-screen max-w-4xl p-8 mx-auto">
 			<div>
 				<Link
 					to={`/${params.pageId}`}
-					className={`pb-8 text-4xl hover:text-blue-500 hover:underline transition-colors mr-6 ${
-						!isTrackerView ? 'text-blue-500' : ''
+					className={`${linkStyles} mr-6 ${
+						!isTrackerView ? selectedStyles : ''
 					}`}
 				>
 					Tasks
 				</Link>
 				<Link
 					to={`/${params.pageId}/tracker`}
-					className={`pb-8 text-4xl hover:text-blue-500 hover:underline transition-colors ${
-						isTrackerView ? 'text-blue-500' : ''
+					className={`${linkStyles} ${
+						isTrackerView ? selectedStyles : ''
 					}`}
 				>
 					Tracker
