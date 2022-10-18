@@ -84,13 +84,13 @@ export default function Tasks() {
 				remainingRechecks.current--;
 				createRefetchTimeout();
 
-				fetcher.load(`/${pageId.current}`);
+				fetcher.load(`/${pageId.current}/?index`);
 			}, recheckWaitMs);
 		}
 	}, []);
 
 	const refetch = useCallback(() => {
-		fetcher.load(`/${pageId.current}`);
+		fetcher.load(`/${pageId.current}/?index`);
 		remainingRechecks.current = recheckCount;
 		createRefetchTimeout();
 	}, []);
