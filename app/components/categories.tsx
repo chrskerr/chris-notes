@@ -50,7 +50,7 @@ export const Categories = memo(
 							<DropZone
 								categoryId={category.id}
 								allCategories={sortedCategories}
-								position="above"
+								position="below"
 								refetch={refetch}
 							/>
 						)}
@@ -114,7 +114,10 @@ function DropZone({
 			}
 			newOrderings.push({ id: category.id, order: currOrder++ });
 			if (category.id === categoryId && position === 'below') {
-				newOrderings.push();
+				newOrderings.push({
+					id: droppedCategory.id,
+					order: currOrder++,
+				});
 			}
 		}
 

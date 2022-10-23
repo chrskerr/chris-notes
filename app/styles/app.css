@@ -1,5 +1,5 @@
 /*
-! tailwindcss v3.1.8 | MIT License | https://tailwindcss.com
+! tailwindcss v3.2.1 | MIT License | https://tailwindcss.com
 */
 
 /*
@@ -410,6 +410,12 @@ video {
   height: auto;
 }
 
+/* Make elements with the HTML hidden attribute stay hidden by default */
+
+[hidden] {
+  display: none;
+}
+
 *, ::before, ::after {
   --tw-border-spacing-x: 0;
   --tw-border-spacing-y: 0;
@@ -590,6 +596,10 @@ video {
   margin-top: 38px;
 }
 
+.-mt-4 {
+  margin-top: -1rem;
+}
+
 .mr-6 {
   margin-right: 1.5rem;
 }
@@ -632,6 +642,10 @@ video {
 
 .items-center {
   align-items: center;
+}
+
+.justify-end {
+  justify-content: flex-end;
 }
 
 .rounded {
@@ -707,6 +721,10 @@ video {
 
 .pb-1 {
   padding-bottom: 0.25rem;
+}
+
+.pt-4 {
+  padding-top: 1rem;
 }
 
 .pb-24 {
@@ -816,6 +834,24 @@ video {
 
 .hover\:underline:hover {
   text-decoration-line: underline;
+}
+
+@media (min-width: 640px) {
+  .sm\:mt-0 {
+    margin-top: 0px;
+  }
+
+  .sm\:flex-row {
+    flex-direction: row;
+  }
+
+  .sm\:items-center {
+    align-items: center;
+  }
+
+  .sm\:pt-0 {
+    padding-top: 0px;
+  }
 }
 
 .\[\&\:has\(\*\:focus\)\]\:bg-slate-100:has(*:focus) {

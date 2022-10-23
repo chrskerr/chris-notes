@@ -13,7 +13,7 @@ type Tasks = {
 	tasks: {
 		id: string;
 		title: string;
-		daysElapsed: number;
+		daysElapsed: number | null;
 		completions: { id: string; createdAt: Date }[];
 	}[];
 };
@@ -40,10 +40,9 @@ export const loader: LoaderFunction = async ({ request, params }) => {
 		tasks: tasks.map(task => ({
 			id: task.id,
 			title: task.title,
-			daysElapsed: differenceInDays(
-				task.completions[0]?.createdAt ?? task.createdAt,
-				new Date(),
-			),
+			daysElapsed: task.completions[0]?.createdAt
+				? differenceInDays(new Date(), task.completions[0]?.createdAt)
+				: null,
 			completions: task.completions.map(({ id, createdAt }) => ({
 				id,
 				createdAt,

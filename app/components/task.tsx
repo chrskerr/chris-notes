@@ -83,10 +83,10 @@ export const Task = memo(
 				open
 				className="p-1 pl-4 mt-[38px] border border-dashed rounded transition-color"
 			>
-				<summary className="flex items-center">
-					<div className="flex items-center flex-1 stransition-color rounded hover:bg-slate-100 [&:has(*:focus)]:bg-slate-100">
+				<summary className="flex pt-4 sm:items-center sm:pt-0">
+					<div className="flex sm:items-center flex-col sm:flex-row flex-1 transition-color rounded hover:bg-slate-100 [&:has(*:focus)]:bg-slate-100">
 						<span
-							className="flex-1 px-4 py-2 text-xl outline-none word-break"
+							className="flex-1 px-4 py-2 -mt-4 text-xl outline-none sm:mt-0 word-break"
 							contentEditable
 							suppressContentEditableWarning
 							spellCheck
@@ -104,18 +104,24 @@ export const Task = memo(
 						>
 							{title}
 						</span>
-						<span>Last completed {daysElapsed} days ago</span>
-						<span
-							onClick={handleDelete}
-							className="mx-4 text-red-500 cursor-pointer"
-						>
-							x
-						</span>
+						<div className="flex justify-end mt-2 sm:mt-0">
+							{typeof daysElapsed === 'number' && (
+								<span>
+									Last completed {daysElapsed} days ago
+								</span>
+							)}
+							<span
+								onClick={handleDelete}
+								className="mx-4 text-red-500 cursor-pointer"
+							>
+								x
+							</span>
+						</div>
 					</div>
 				</summary>
-				<div className="flex p-4">
+				<div className="flex items-center p-4">
 					<details className="flex-1">
-						<summary>Completion history</summary>
+						<summary>History</summary>
 						<div className="p-4">
 							{task.completions.length ? (
 								<ul>
