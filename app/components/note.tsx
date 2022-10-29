@@ -55,13 +55,10 @@ export function Note({ note, refetch }: Props) {
 
 	useEffect(() => {
 		setTextContent(content);
-	}, [content]);
-
-	useEffect(() => {
 		if (el.current) {
 			resizeEl(el.current);
 		}
-	}, []);
+	}, [content]);
 
 	const handleChange: ChangeEventHandler<HTMLTextAreaElement> = e => {
 		setTextContent(e.currentTarget.value);
