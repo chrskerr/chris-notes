@@ -1,7 +1,9 @@
-import type {
+import {
+	ChangeEventHandler,
 	DragEventHandler,
 	FocusEventHandler,
 	KeyboardEventHandler,
+	useRef,
 } from 'react';
 import { useEffect, useState } from 'react';
 import debounce from 'lodash/debounce';
@@ -26,17 +28,29 @@ function handleSave(id: string, newContent: string) {
 
 const debouncedHandleSave = debounce(handleSave, 5_000);
 
-const handleKeyDown: KeyboardEventHandler<HTMLSpanElement> = e => {
+function resizeEl(el: HTMLTextAreaElement) {
+	el.style.height = 'inherit';
+	el.style.height = `${el.scrollHeight}px`;
+}
+
+const handleKeyDown: KeyboardEventHandler<HTMLTextAreaElement> = e => {
+	resizeEl(e.currentTarget);
+
 	if (['Enter', 'Escape'].includes(e.key)) {
 		e.preventDefault();
 		e.currentTarget.blur();
 	}
 };
 
+const handleFocus: FocusEventHandler<HTMLTextAreaElement> = e => {
+	resizeEl(e.currentTarget);
+};
+
 export function Note({ note, refetch }: Props) {
 	const { id, content, completedAt } = note;
 
-	const [isEditing, setIsEditing] = useState(false);
+	const el = useRef<HTMLTextAreaElement>(null);
+
 	const [textContent, setTextContent] = useState(content);
 
 	useEffect(() => {
@@ -44,11 +58,15 @@ export function Note({ note, refetch }: Props) {
 	}, [content]);
 
 	useEffect(() => {
-		if (textContent !== content) {
-			debouncedHandleSave(id, textContent);
+		if (el.current) {
+			resizeEl(el.current);
 		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [textContent]);
+	}, []);
+
+	const handleChange: ChangeEventHandler<HTMLTextAreaElement> = e => {
+		setTextContent(e.currentTarget.value);
+		debouncedHandleSave(id, e.currentTarget.value);
+	};
 
 	function handleDelete() {
 		const shouldProceed = confirm(
@@ -76,11 +94,10 @@ export function Note({ note, refetch }: Props) {
 		e.stopPropagation();
 	};
 
-	const handleBlur: FocusEventHandler<HTMLInputElement> = async e => {
+	const handleBlur: FocusEventHandler<HTMLTextAreaElement> = async e => {
 		debouncedHandleSave(id, e.target.value);
 		await debouncedHandleSave.flush();
 		refetch();
-		setIsEditing(false);
 	};
 
 	return (
@@ -94,24 +111,16 @@ export function Note({ note, refetch }: Props) {
 				checked={!!completedAt}
 				onChange={e => handleToggle(e.target.checked)}
 			/>
-			{isEditing ? (
-				<input
-					type="text"
-					className="flex-1 mx-4 bg-transparent outline-none"
-					value={textContent}
-					autoFocus
-					onBlur={handleBlur}
-					onKeyDown={handleKeyDown}
-					onChange={e => setTextContent(e.target.value)}
-				/>
-			) : (
-				<span
-					className="flex-1 mx-4 word-break cursor-text"
-					onClick={() => setIsEditing(true)}
-				>
-					{textContent}
-				</span>
-			)}
+			<textarea
+				ref={el}
+				className="flex-1 mx-4 overflow-hidden bg-transparent outline-none resize-none"
+				value={textContent}
+				rows={1}
+				onBlur={handleBlur}
+				onFocus={handleFocus}
+				onKeyDown={handleKeyDown}
+				onChange={handleChange}
+			/>
 			<span
 				onClick={handleDelete}
 				className="text-red-500 cursor-pointer"

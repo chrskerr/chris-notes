@@ -636,8 +636,8 @@ video {
   cursor: pointer;
 }
 
-.cursor-text {
-  cursor: text;
+.resize-none {
+  resize: none;
 }
 
 .flex-col {
@@ -650,6 +650,10 @@ video {
 
 .justify-end {
   justify-content: flex-end;
+}
+
+.overflow-hidden {
+  overflow: hidden;
 }
 
 .rounded {
