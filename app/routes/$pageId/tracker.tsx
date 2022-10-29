@@ -7,6 +7,7 @@ import { differenceInDays } from 'date-fns';
 import { useCallback, useEffect, useRef } from 'react';
 
 import { Task } from '~/components/task';
+import { useRefetch } from '~/components/useRefetch';
 import { db } from '~/utils/db.server';
 
 type Tasks = {
@@ -51,43 +52,17 @@ export const loader: LoaderFunction = async ({ request, params }) => {
 	});
 };
 
-const recheckCount = 120;
-const recheckWaitMs = 1_000;
-
 export default function Tracker() {
 	const loaderData = useLoaderData<Tasks>();
-	const fetcher = useFetcher<typeof loaderData>();
 
 	const params = useParams();
 	const pageId = useRef(params.pageId);
+	const fetcher = useRefetch<typeof loaderData>(`/${pageId.current}/tracker`);
 
-	const data = fetcher.data || loaderData;
-
-	let remainingRechecks = useRef(recheckCount);
-	let timeoutRef = useRef<number | null>(null);
-
-	const createRefetchTimeout = useCallback(() => {
-		if (remainingRechecks.current > 0 && !timeoutRef.current) {
-			timeoutRef.current = window.setTimeout(() => {
-				timeoutRef.current = null;
-				remainingRechecks.current--;
-				createRefetchTimeout();
-
-				fetcher.load(`/${pageId.current}/tracker`);
-			}, recheckWaitMs);
-		}
-	}, []);
+	const data: typeof loaderData = fetcher.data || loaderData;
 
 	const refetch = useCallback(() => {
 		fetcher.load(`/${pageId.current}/tracker`);
-		remainingRechecks.current = recheckCount;
-		createRefetchTimeout();
-	}, []);
-
-	const cancelRefetch = useCallback(() => {
-		timeoutRef.current && window.clearTimeout(timeoutRef.current);
-		timeoutRef.current = null;
-		remainingRechecks.current = 0;
 	}, []);
 
 	function handleAdd() {
@@ -101,18 +76,6 @@ export default function Tracker() {
 	useEffect(() => {
 		pageId.current = params.pageId;
 	}, [params.pageId]);
-
-	useEffect(() => {
-		window.addEventListener('focus', refetch, { passive: true });
-		window.addEventListener('blur', cancelRefetch, { passive: true });
-		createRefetchTimeout();
-
-		return () => {
-			cancelRefetch();
-			window.removeEventListener('focus', refetch);
-			window.removeEventListener('blur', cancelRefetch);
-		};
-	}, []);
 
 	return (
 		<>

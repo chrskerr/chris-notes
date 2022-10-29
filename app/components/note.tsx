@@ -1,4 +1,8 @@
-import type { DragEventHandler, KeyboardEventHandler } from 'react';
+import type {
+	DragEventHandler,
+	FocusEventHandler,
+	KeyboardEventHandler,
+} from 'react';
 import { useEffect, useState } from 'react';
 import debounce from 'lodash/debounce';
 
@@ -31,6 +35,8 @@ const handleKeyDown: KeyboardEventHandler<HTMLSpanElement> = e => {
 
 export function Note({ note, refetch }: Props) {
 	const { id, content, completedAt } = note;
+
+	const [isEditing, setIsEditing] = useState(false);
 	const [textContent, setTextContent] = useState(content);
 
 	useEffect(() => {
@@ -70,6 +76,13 @@ export function Note({ note, refetch }: Props) {
 		e.stopPropagation();
 	};
 
+	const handleBlur: FocusEventHandler<HTMLInputElement> = async e => {
+		debouncedHandleSave(id, e.target.value);
+		await debouncedHandleSave.flush();
+		refetch();
+		setIsEditing(false);
+	};
+
 	return (
 		<div
 			className={`flex items-center px-4 py-2 transition-colors rounded hover:bg-slate-100 [&:has(*:focus)]:bg-slate-100`}
@@ -81,19 +94,24 @@ export function Note({ note, refetch }: Props) {
 				checked={!!completedAt}
 				onChange={e => handleToggle(e.target.checked)}
 			/>
-			<span
-				className="flex-1 mx-4 outline-none word-break"
-				contentEditable
-				suppressContentEditableWarning
-				spellCheck
-				onInput={e => setTextContent(e.currentTarget.innerText)}
-				onKeyDown={handleKeyDown}
-				onBlur={e =>
-					handleSave(id, e.currentTarget.innerText).then(refetch)
-				}
-			>
-				{content}
-			</span>
+			{isEditing ? (
+				<input
+					type="text"
+					className="flex-1 mx-4 bg-transparent outline-none"
+					value={textContent}
+					autoFocus
+					onBlur={handleBlur}
+					onKeyDown={handleKeyDown}
+					onChange={e => setTextContent(e.target.value)}
+				/>
+			) : (
+				<span
+					className="flex-1 mx-4 word-break cursor-text"
+					onClick={() => setIsEditing(true)}
+				>
+					{textContent}
+				</span>
+			)}
 			<span
 				onClick={handleDelete}
 				className="text-red-500 cursor-pointer"

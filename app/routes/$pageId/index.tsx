@@ -1,12 +1,13 @@
 import type { LoaderFunction } from '@remix-run/node';
 import { redirect } from '@remix-run/node';
 import { json } from '@remix-run/node';
-import { useFetcher, useLoaderData, useParams } from '@remix-run/react';
+import { useLoaderData, useParams } from '@remix-run/react';
 
 import { useCallback, useEffect, useRef } from 'react';
 import { Categories } from '~/components/categories';
 
 import { Done } from '~/components/done';
+import { useRefetch } from '~/components/useRefetch';
 import { db } from '~/utils/db.server';
 
 type NoteType = {
@@ -62,43 +63,17 @@ export const loader: LoaderFunction = async ({ request, params }) => {
 	});
 };
 
-const recheckCount = 120;
-const recheckWaitMs = 1_000;
-
 export default function Tasks() {
 	const loaderData = useLoaderData<CategorisedNotes>();
-	const fetcher = useFetcher<typeof loaderData>();
 
 	const params = useParams();
 	const pageId = useRef(params.pageId);
+	const fetcher = useRefetch<typeof loaderData>(`/${pageId.current}/?index`);
 
-	const data = fetcher.data || loaderData;
-
-	let remainingRechecks = useRef(recheckCount);
-	let timeoutRef = useRef<number | null>(null);
-
-	const createRefetchTimeout = useCallback(() => {
-		if (remainingRechecks.current > 0 && !timeoutRef.current) {
-			timeoutRef.current = window.setTimeout(() => {
-				timeoutRef.current = null;
-				remainingRechecks.current--;
-				createRefetchTimeout();
-
-				fetcher.load(`/${pageId.current}/?index`);
-			}, recheckWaitMs);
-		}
-	}, []);
+	const data: typeof loaderData = fetcher.data || loaderData;
 
 	const refetch = useCallback(() => {
 		fetcher.load(`/${pageId.current}/?index`);
-		remainingRechecks.current = recheckCount;
-		createRefetchTimeout();
-	}, []);
-
-	const cancelRefetch = useCallback(() => {
-		timeoutRef.current && window.clearTimeout(timeoutRef.current);
-		timeoutRef.current = null;
-		remainingRechecks.current = 0;
 	}, []);
 
 	function handleAdd() {
@@ -112,18 +87,6 @@ export default function Tasks() {
 	useEffect(() => {
 		pageId.current = params.pageId;
 	}, [params.pageId]);
-
-	useEffect(() => {
-		window.addEventListener('focus', refetch, { passive: true });
-		window.addEventListener('blur', cancelRefetch, { passive: true });
-		createRefetchTimeout();
-
-		return () => {
-			cancelRefetch();
-			window.removeEventListener('focus', refetch);
-			window.removeEventListener('blur', cancelRefetch);
-		};
-	}, []);
 
 	return (
 		<>

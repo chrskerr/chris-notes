@@ -8,7 +8,7 @@ interface Props {
 	task: {
 		id: string;
 		title: string;
-		daysElapsed: number;
+		daysElapsed: number | null;
 		completions: { id: string; createdAt: string }[];
 	};
 	refetch: () => void;
