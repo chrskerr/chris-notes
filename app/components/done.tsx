@@ -47,7 +47,7 @@ export const Done = memo(
 					{categorisedData.map(noteGroup => (
 						<details key={noteGroup.label} className="mb-3">
 							<summary className="pb-1">
-								{noteGroup.label}
+								{noteGroup.label} ({noteGroup.notes.length})
 							</summary>
 							{noteGroup.notes.map(note => (
 								<Note
