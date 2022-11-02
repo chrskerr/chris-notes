@@ -1,9 +1,7 @@
-import {
-	ChangeEventHandler,
+import type {
 	DragEventHandler,
 	FocusEventHandler,
 	KeyboardEventHandler,
-	useRef,
 } from 'react';
 import { useEffect, useState } from 'react';
 import debounce from 'lodash/debounce';
@@ -28,41 +26,31 @@ function handleSave(id: string, newContent: string) {
 
 const debouncedHandleSave = debounce(handleSave, 5_000);
 
-function resizeEl(el: HTMLTextAreaElement) {
-	el.style.height = 'inherit';
-	el.style.height = `${el.scrollHeight}px`;
-}
-
-const handleKeyDown: KeyboardEventHandler<HTMLTextAreaElement> = e => {
-	resizeEl(e.currentTarget);
-
+const handleKeyDown: KeyboardEventHandler<HTMLSpanElement> = e => {
 	if (['Enter', 'Escape'].includes(e.key)) {
 		e.preventDefault();
 		e.currentTarget.blur();
 	}
 };
 
-const handleFocus: FocusEventHandler<HTMLTextAreaElement> = e => {
-	resizeEl(e.currentTarget);
-};
-
 export function Note({ note, refetch }: Props) {
 	const { id, content, completedAt } = note;
-
-	const el = useRef<HTMLTextAreaElement>(null);
-
 	const [textContent, setTextContent] = useState(content);
 
 	useEffect(() => {
 		setTextContent(content);
-		if (el.current) {
-			resizeEl(el.current);
-		}
 	}, [content]);
 
-	const handleChange: ChangeEventHandler<HTMLTextAreaElement> = e => {
-		setTextContent(e.currentTarget.value);
-		debouncedHandleSave(id, e.currentTarget.value);
+	useEffect(() => {
+		if (textContent !== content) {
+			debouncedHandleSave(id, textContent);
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [textContent]);
+
+	const handleBlur: FocusEventHandler<HTMLSpanElement> = async e => {
+		await debouncedHandleSave.flush();
+		handleSave(id, e.currentTarget.innerText).then(refetch);
 	};
 
 	function handleDelete() {
@@ -91,12 +79,6 @@ export function Note({ note, refetch }: Props) {
 		e.stopPropagation();
 	};
 
-	const handleBlur: FocusEventHandler<HTMLTextAreaElement> = async e => {
-		debouncedHandleSave(id, e.target.value);
-		await debouncedHandleSave.flush();
-		refetch();
-	};
-
 	return (
 		<div
 			className={`flex items-center px-4 py-2 transition-colors rounded hover:bg-slate-100 [&:has(*:focus)]:bg-slate-100`}
@@ -108,16 +90,17 @@ export function Note({ note, refetch }: Props) {
 				checked={!!completedAt}
 				onChange={e => handleToggle(e.target.checked)}
 			/>
-			<textarea
-				ref={el}
-				className="flex-1 mx-4 overflow-hidden bg-transparent outline-none resize-none"
-				value={textContent}
-				rows={1}
-				onBlur={handleBlur}
-				onFocus={handleFocus}
+			<span
+				className="flex-1 mx-4 outline-none word-break"
+				contentEditable
+				suppressContentEditableWarning
+				spellCheck
+				onInput={e => setTextContent(e.currentTarget.innerText)}
 				onKeyDown={handleKeyDown}
-				onChange={handleChange}
-			/>
+				onBlur={handleBlur}
+			>
+				{content}
+			</span>
 			<span
 				onClick={handleDelete}
 				className="text-red-500 cursor-pointer"

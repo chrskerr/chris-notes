@@ -636,10 +636,6 @@ video {
   cursor: pointer;
 }
 
-.resize-none {
-  resize: none;
-}
-
 .flex-col {
   flex-direction: column;
 }
@@ -650,10 +646,6 @@ video {
 
 .justify-end {
   justify-content: flex-end;
-}
-
-.overflow-hidden {
-  overflow: hidden;
 }
 
 .rounded {
@@ -676,10 +668,6 @@ video {
 .bg-gray-100 {
   --tw-bg-opacity: 1;
   background-color: rgb(243 244 246 / var(--tw-bg-opacity));
-}
-
-.bg-transparent {
-  background-color: transparent;
 }
 
 .bg-blue-500 {
