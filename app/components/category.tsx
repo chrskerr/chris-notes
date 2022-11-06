@@ -111,7 +111,7 @@ export const Category = memo(
 
 		return (
 			<details
-				className={`p-1 pl-4 border border-dashed rounded transition-color ${
+				className={`p-1 pl-2 border border-dashed rounded transition-color ${
 					isDraggedOver ? 'border-black' : ''
 				}`}
 				open={category.isOpen}
@@ -123,10 +123,10 @@ export const Category = memo(
 				draggable
 				onDragStart={handleDrag}
 			>
-				<summary className="flex items-center">
+				<summary className="flex items-center pl-2">
 					<div className="flex items-center flex-1 stransition-color rounded hover:bg-slate-100 [&:has(*:focus)]:bg-slate-100">
 						<span
-							className="px-4 py-2 text-xl outline-none word-break"
+							className="py-2 pl-[9px] pr-4 text-xl outline-none word-break"
 							contentEditable
 							suppressContentEditableWarning
 							spellCheck
@@ -144,25 +144,25 @@ export const Category = memo(
 						>
 							{title}
 						</span>
-						<span className="flex-1 ">({notes.length})</span>
+						<span className="flex-1">({notes.length})</span>
 						<span
 							onClick={handleDelete}
-							className="mr-4 text-red-500 cursor-pointer"
+							className="mr-2 text-red-500 cursor-pointer"
 						>
 							x
 						</span>
 					</div>
 				</summary>
-				<div className="pl-[17px]">
+				<div>
 					{notes.map(note => (
 						<Note key={note.id} note={note} refetch={refetch} />
 					))}
 				</div>
 				<div
 					onClick={handleAdd}
-					className="px-4 py-2 mt-2 transition-colors rounded cursor-pointer hover:bg-slate-100"
+					className="py-2 pl-1 pr-4 mt-2 transition-colors rounded cursor-pointer hover:bg-slate-100"
 				>
-					<span className="mr-2">+</span>
+					<span className="mr-5">+</span>
 					<span>Add new note</span>
 				</div>
 			</details>

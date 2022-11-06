@@ -13,7 +13,7 @@ export default function Page() {
 		'underline underline-offset-8 decoration-wavy text-blue-500';
 
 	return (
-		<div className="flex flex-col h-screen max-w-4xl p-8 mx-auto">
+		<div className="flex flex-col h-screen max-w-5xl p-6 mx-auto sm:p-8">
 			<div>
 				<Link
 					to={`/${params.pageId}`}

@@ -37,17 +37,19 @@ export const Done = memo(
 		const categorisedData = categoriseNotesByDate(data);
 
 		return (
-			<details className="p-1 pl-4 mb-4 border border-dashed rounded">
-				<summary className="flex items-center">
-					<span className="flex-1 px-4 py-2 text-xl outline-none">
+			<details className="p-1 pl-2 mb-4 border border-dashed rounded">
+				<summary className="flex items-center pl-2">
+					<span className="flex-1 pr-4 pl-[9px] py-2 text-xl outline-none">
 						Done
 					</span>
 				</summary>
-				<div className="pl-[17px] pt-2">
+				<div className="pt-2 pl-[30px]">
 					{categorisedData.map(noteGroup => (
 						<details key={noteGroup.label} className="mb-3">
-							<summary className="pb-1">
-								{noteGroup.label} ({noteGroup.notes.length})
+							<summary className="pb-1 pl-2">
+								<span className="pl-[9px]">
+									{noteGroup.label} ({noteGroup.notes.length})
+								</span>
 							</summary>
 							{noteGroup.notes.map(note => (
 								<Note

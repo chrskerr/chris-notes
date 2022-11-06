@@ -42,8 +42,13 @@ export const loader: LoaderFunction = async ({ request, params }) => {
 				createdAt: true,
 				notes: {
 					where: { completedAt: null },
-					select: { id: true, content: true, completedAt: true },
-					orderBy: { createdAt: 'asc' },
+					select: {
+						id: true,
+						content: true,
+						completedAt: true,
+						priority: true,
+					},
+					orderBy: [{ priority: 'asc' }, { createdAt: 'asc' }],
 				},
 			},
 			where: { pageId },

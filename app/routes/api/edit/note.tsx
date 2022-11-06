@@ -8,6 +8,7 @@ export const action: ActionFunction = async ({ request }) => {
 		content?: string;
 		isComplete?: boolean;
 		categoryId?: string;
+		priority?: number;
 	} = await request.json();
 
 	if (!body.id) return null;
@@ -30,6 +31,14 @@ export const action: ActionFunction = async ({ request }) => {
 		await db.note.update({
 			where: { id: body.id },
 			data: { completedAt: body.isComplete ? new Date() : null },
+		});
+	}
+
+	if (body.priority && [1, 2, 3].includes(body.priority)) {
+		console.log(body.priority);
+		await db.note.update({
+			where: { id: body.id },
+			data: { priority: body.priority },
 		});
 	}
 

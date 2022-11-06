@@ -10,6 +10,7 @@ export type UINote = {
 	id: string;
 	content: string;
 	completedAt: string | null;
+	priority?: number;
 };
 
 interface Props {
@@ -34,7 +35,7 @@ const handleKeyDown: KeyboardEventHandler<HTMLSpanElement> = e => {
 };
 
 export function Note({ note, refetch }: Props) {
-	const { id, content, completedAt } = note;
+	const { id, content, completedAt, priority } = note;
 	const [textContent, setTextContent] = useState(content);
 
 	useEffect(() => {
@@ -72,6 +73,15 @@ export function Note({ note, refetch }: Props) {
 		}).then(refetch);
 	}
 
+	function handleChangePriority(priority: string) {
+		if (!isNaN(Number(priority)) && [1, 2, 3].includes(Number(priority))) {
+			fetch('/api/edit/note', {
+				method: 'post',
+				body: JSON.stringify({ id, priority: Number(priority) }),
+			}).then(refetch);
+		}
+	}
+
 	const handleDrag: DragEventHandler<HTMLDivElement> = e => {
 		e.dataTransfer.effectAllowed = 'move';
 		e.dataTransfer.setData('note', id);
@@ -81,7 +91,7 @@ export function Note({ note, refetch }: Props) {
 
 	return (
 		<div
-			className={`flex items-center px-4 py-2 transition-colors rounded hover:bg-slate-100 [&:has(*:focus)]:bg-slate-100`}
+			className={`flex items-center pl-[6px] pr-2 py-2 transition-colors rounded hover:bg-slate-100 [&:has(*:focus)]:bg-slate-100`}
 			onDragStart={handleDrag}
 			draggable={!completedAt}
 		>
@@ -101,6 +111,19 @@ export function Note({ note, refetch }: Props) {
 			>
 				{content}
 			</span>
+			{priority && (
+				<select
+					value={[1, 2, 3].includes(priority) ? priority : 2}
+					onChange={e => handleChangePriority(e.target.value)}
+					className={`pl-2 pr-1 mx-2 text-center bg-blue-100 appearance-none cursor-pointer ${
+						priority === 1 ? 'bg-pink-100' : ''
+					} ${priority === 3 ? 'bg-green-100' : ''}`}
+				>
+					<option value={1}>↑</option>
+					<option value={2}>·</option>
+					<option value={3}>↓</option>
+				</select>
+			)}
 			<span
 				onClick={handleDelete}
 				className="text-red-500 cursor-pointer"
