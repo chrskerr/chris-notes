@@ -147,7 +147,7 @@ export const Category = memo(
 						<span className="flex-1">({notes.length})</span>
 						<span
 							onClick={handleDelete}
-							className="mr-2 text-red-500 cursor-pointer"
+							className="mr-2 text-red-500 cursor-pointer sm:mr-4"
 						>
 							x
 						</span>

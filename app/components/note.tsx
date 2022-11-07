@@ -91,7 +91,7 @@ export function Note({ note, refetch }: Props) {
 
 	return (
 		<div
-			className={`flex items-center pl-[6px] pr-2 py-2 transition-colors rounded hover:bg-slate-100 [&:has(*:focus)]:bg-slate-100`}
+			className={`flex items-center pl-[6px] pr-2 py-2 transition-colors rounded hover:bg-slate-100 [&:has(*:focus)]:bg-slate-100 sm:pr-4`}
 			onDragStart={handleDrag}
 			draggable={!completedAt}
 		>
@@ -115,7 +115,7 @@ export function Note({ note, refetch }: Props) {
 				<select
 					value={[1, 2, 3].includes(priority) ? priority : 2}
 					onChange={e => handleChangePriority(e.target.value)}
-					className={`pl-2 pr-1 mx-2 text-center bg-blue-100 appearance-none cursor-pointer ${
+					className={`pl-2 pr-1 sm:mr-4 mx-2 text-center bg-blue-100 appearance-none cursor-pointer ${
 						priority === 1 ? 'bg-pink-100' : ''
 					} ${priority === 3 ? 'bg-green-100' : ''}`}
 				>
