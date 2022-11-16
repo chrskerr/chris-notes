@@ -115,7 +115,7 @@ export function Note({ note, refetch }: Props) {
 				<select
 					value={[1, 2, 3].includes(priority) ? priority : 2}
 					onChange={e => handleChangePriority(e.target.value)}
-					className={`pl-2 pr-1 sm:mr-4 mx-2 text-center bg-blue-100 appearance-none cursor-pointer ${
+					className={`sm:mr-4 w-[25px] aspect-square align-last-center mx-2 text-center bg-blue-100 appearance-none cursor-pointer ${
 						priority === 1 ? 'bg-pink-100' : ''
 					} ${priority === 3 ? 'bg-green-100' : ''}`}
 				>

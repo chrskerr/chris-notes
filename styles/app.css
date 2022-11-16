@@ -6,4 +6,8 @@
 	.word-break {
 		word-break: break-word;
 	}
+
+	.align-last-center {
+		text-align-last: center;
+	}
 }
