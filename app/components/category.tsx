@@ -124,7 +124,7 @@ export const Category = memo(
 				onDragStart={handleDrag}
 			>
 				<summary className="pl-2">
-					<div className="inline-flex w-[calc(100%_-_1.5rem)] items-center flex-1 stransition-color rounded hover:bg-slate-100 [&:has(*:focus)]:bg-slate-100">
+					<div className="inline-flex w-[calc(100%_-_1.1rem)] items-center flex-1 stransition-color rounded hover:bg-slate-100 [&:has(*:focus)]:bg-slate-100">
 						<span
 							className="py-2 pl-[9px] pr-4 text-xl outline-none word-break"
 							contentEditable
