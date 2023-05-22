@@ -36,7 +36,7 @@ export const Done = ({ data, refetch }: Props) => {
 	const categorisedData = categoriseNotesByDate(data);
 
 	return (
-		<div className="pt-2 pl-[30px]">
+		<div className="pt-2">
 			{categorisedData.map(noteGroup => (
 				<DoneGroup
 					key={noteGroup.label}
