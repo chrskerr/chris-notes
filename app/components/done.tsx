@@ -11,9 +11,9 @@ interface Props {
 	refetch: () => void;
 }
 
-function categoriseNotesByDate(
-	notes: UINote[],
-): Array<{ label: string; notes: UINote[] }> {
+type NoteGroup = { label: string; notes: UINote[] };
+
+function categoriseNotesByDate(notes: UINote[]): NoteGroup[] {
 	const doneMap = new Map<string, { label: string; notes: UINote[] }>();
 	for (const note of notes) {
 		if (!note.completedAt) continue;
@@ -28,41 +28,43 @@ function categoriseNotesByDate(
 	return [...doneMap.values()];
 }
 
-export const Done = memo(
-	function Done({ data, refetch }: Props) {
-		if (data.length === 0) {
-			return null;
-		}
+export const Done = ({ data, refetch }: Props) => {
+	if (data.length === 0) {
+		return null;
+	}
 
-		const categorisedData = categoriseNotesByDate(data);
+	const categorisedData = categoriseNotesByDate(data);
 
-		return (
-			<details className="p-1 pl-2 mb-4 border border-dashed rounded">
-				<summary className="flex items-center pl-2">
-					<span className="flex-1 pr-4 pl-[9px] py-2 text-xl outline-none">
-						Done
-					</span>
-				</summary>
-				<div className="pt-2 pl-[30px]">
-					{categorisedData.map(noteGroup => (
-						<details key={noteGroup.label} className="mb-3">
-							<summary className="pb-1 pl-2">
-								<span className="pl-[9px]">
-									{noteGroup.label} ({noteGroup.notes.length})
-								</span>
-							</summary>
-							{noteGroup.notes.map(note => (
-								<Note
-									key={note.id}
-									note={note}
-									refetch={refetch}
-								/>
-							))}
-						</details>
-					))}
-				</div>
-			</details>
-		);
-	},
-	(prevProps, newProps) => isEqual(newProps.data, prevProps.data),
-);
+	return (
+		<div className="pt-2 pl-[30px]">
+			{categorisedData.map(noteGroup => (
+				<DoneGroup
+					key={noteGroup.label}
+					noteGroup={noteGroup}
+					refetch={refetch}
+				/>
+			))}
+		</div>
+	);
+};
+
+function DoneGroup({
+	noteGroup,
+	refetch,
+}: {
+	noteGroup: NoteGroup;
+	refetch: () => void;
+}) {
+	return (
+		<details key={noteGroup.label} className="mb-3">
+			<summary className="pb-1 pl-2">
+				<span className="pl-[9px]">
+					{noteGroup.label} ({noteGroup.notes.length})
+				</span>
+			</summary>
+			{noteGroup.notes.map(note => (
+				<Note key={note.id} note={note} refetch={refetch} />
+			))}
+		</details>
+	);
+}

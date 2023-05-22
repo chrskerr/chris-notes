@@ -6,11 +6,10 @@ import { useLoaderData, useParams } from '@remix-run/react';
 import { useCallback, useEffect, useRef } from 'react';
 import { Categories } from '~/components/categories';
 
-import { Done } from '~/components/done';
 import { useRefetch } from '~/components/useRefetch';
 import { db } from '~/utils/db.server';
 
-type NoteType = {
+export type NoteType = {
 	id: string;
 	content: string;
 	completedAt: Date | null;
@@ -25,46 +24,36 @@ type CategorisedNotes = {
 		createdAt: Date;
 		notes: NoteType[];
 	}>;
-	done: NoteType[];
 };
 
 export const loader: LoaderFunction = async ({ request, params }) => {
 	const pageId = params.pageId;
 	if (!pageId) return redirect('/');
 
-	const [data, completedNotes] = await Promise.all([
-		db.category.findMany({
-			select: {
-				id: true,
-				title: true,
-				isOpen: true,
-				order: true,
-				createdAt: true,
-				notes: {
-					where: { completedAt: null },
-					select: {
-						id: true,
-						content: true,
-						completedAt: true,
-						priority: true,
-					},
-					orderBy: [{ priority: 'asc' }, { createdAt: 'asc' }],
+	const data = await db.category.findMany({
+		select: {
+			id: true,
+			title: true,
+			isOpen: true,
+			order: true,
+			createdAt: true,
+			notes: {
+				where: { completedAt: null },
+				select: {
+					id: true,
+					content: true,
+					completedAt: true,
+					priority: true,
 				},
+				orderBy: [{ priority: 'asc' }, { createdAt: 'asc' }],
 			},
-			where: { pageId },
-			orderBy: { createdAt: 'asc' },
-		}),
-
-		db.note.findMany({
-			where: { completedAt: { not: null }, category: { pageId } },
-			select: { id: true, content: true, completedAt: true },
-			orderBy: { completedAt: 'desc' },
-		}),
-	]);
+		},
+		where: { pageId },
+		orderBy: { createdAt: 'asc' },
+	});
 
 	return json<CategorisedNotes>({
 		categories: data,
-		done: completedNotes,
 	});
 };
 
@@ -96,7 +85,6 @@ export default function Tasks() {
 	return (
 		<>
 			<Categories categories={data.categories} refetch={refetch} />
-			<Done data={data.done} refetch={refetch} />
 
 			<div onClick={handleAdd} className="mt-12 cursor-pointer">
 				<span className="mr-2">+</span>

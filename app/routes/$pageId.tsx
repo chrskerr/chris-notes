@@ -4,7 +4,7 @@ export default function Page() {
 	const params = useParams();
 	const location = useLocation();
 
-	const isTrackerView = location.pathname.endsWith('/tracker');
+	const isTrackerView = location.pathname.endsWith('/completed');
 
 	const url = `https://tasks.chriskerr.dev/${params.pageId}`;
 
@@ -24,12 +24,12 @@ export default function Page() {
 					Tasks
 				</Link>
 				<Link
-					to={`/${params.pageId}/tracker`}
+					to={`/${params.pageId}/completed`}
 					className={`${linkStyles} ${
 						isTrackerView ? selectedStyles : ''
 					}`}
 				>
-					Tracker
+					Completed
 				</Link>
 			</div>
 
