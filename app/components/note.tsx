@@ -35,8 +35,12 @@ const handleKeyDown: KeyboardEventHandler<HTMLSpanElement> = e => {
 };
 
 export function Note({ note, refetch }: Props) {
-	const { id, content, completedAt, priority } = note;
+	const { id, content } = note;
 	const [textContent, setTextContent] = useState(content);
+
+	const [isCompleted, setIsCompleted] = useState(!!note.completedAt);
+	const [priority, setPriority] = useState(note.priority);
+	const [isDeleting, setIsDeleting] = useState(false);
 
 	useEffect(() => {
 		setTextContent(content);
@@ -49,6 +53,14 @@ export function Note({ note, refetch }: Props) {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [textContent]);
 
+	useEffect(() => {
+		setIsCompleted(!!note.completedAt);
+	}, [note.completedAt]);
+
+	useEffect(() => {
+		setPriority(note.priority);
+	}, [note.priority]);
+
 	const handleBlur: FocusEventHandler<HTMLSpanElement> = async e => {
 		await debouncedHandleSave.flush();
 		handleSave(id, e.currentTarget.innerText).then(refetch);
@@ -59,6 +71,7 @@ export function Note({ note, refetch }: Props) {
 			`Are you sure you want to delete "${textContent}"?`,
 		);
 		if (shouldProceed) {
+			setIsDeleting(true);
 			fetch('/api/delete/note', {
 				method: 'post',
 				body: JSON.stringify({ id }),
@@ -67,6 +80,7 @@ export function Note({ note, refetch }: Props) {
 	}
 
 	function handleToggle(isComplete: boolean) {
+		setIsCompleted(isComplete);
 		fetch('/api/edit/note', {
 			method: 'post',
 			body: JSON.stringify({ id, isComplete }),
@@ -75,6 +89,7 @@ export function Note({ note, refetch }: Props) {
 
 	function handleChangePriority(priority: string) {
 		if (!isNaN(Number(priority)) && [1, 2, 3].includes(Number(priority))) {
+			setPriority(Number(priority));
 			fetch('/api/edit/note', {
 				method: 'post',
 				body: JSON.stringify({ id, priority: Number(priority) }),
@@ -89,15 +104,17 @@ export function Note({ note, refetch }: Props) {
 		e.stopPropagation();
 	};
 
+	if (isDeleting) return null;
+
 	return (
 		<div
 			className={`flex items-center pl-[6px] pr-2 py-2 transition-colors rounded hover:bg-slate-100 [&:has(*:focus)]:bg-slate-100 sm:pr-4`}
 			onDragStart={handleDrag}
-			draggable={!completedAt}
+			draggable={!isCompleted}
 		>
 			<input
 				type="checkbox"
-				checked={!!completedAt}
+				checked={isCompleted}
 				onChange={e => handleToggle(e.target.checked)}
 			/>
 			<span
