@@ -7,7 +7,10 @@ export const action: ActionFunction = async ({ request }) => {
 
 	if (!body.id) return null;
 
-	await db.category.delete({ where: { id: body.id } });
+	await db.$transaction(async trx => {
+		await trx.note.deleteMany({ where: { categoryId: body.id } });
+		await trx.category.delete({ where: { id: body.id } });
+	});
 
 	return null;
 };

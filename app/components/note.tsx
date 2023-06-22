@@ -2,6 +2,7 @@ import type {
 	DragEventHandler,
 	FocusEventHandler,
 	KeyboardEventHandler,
+	MouseEventHandler,
 } from 'react';
 import { useEffect, useState } from 'react';
 import debounce from 'lodash/debounce';
@@ -66,7 +67,8 @@ export function Note({ note, refetch }: Props) {
 		handleSave(id, e.currentTarget.innerText).then(refetch);
 	};
 
-	function handleDelete() {
+	const handleDelete: MouseEventHandler<HTMLSpanElement> = e => {
+		e.stopPropagation();
 		const shouldProceed = confirm(
 			`Are you sure you want to delete "${textContent}"?`,
 		);
@@ -77,7 +79,7 @@ export function Note({ note, refetch }: Props) {
 				body: JSON.stringify({ id }),
 			}).then(refetch);
 		}
-	}
+	};
 
 	function handleToggle(isComplete: boolean) {
 		setIsCompleted(isComplete);

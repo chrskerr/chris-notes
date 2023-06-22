@@ -85,7 +85,9 @@ export const Category = memo(
 			}).then(refetch);
 		};
 
-		function handleDelete() {
+		const handleDelete: MouseEventHandler<HTMLDetailsElement> = e => {
+			e.stopPropagation();
+
 			const shouldProceed = confirm(
 				`Are you sure you want to delete "${titleContent}"?`,
 			);
@@ -95,7 +97,7 @@ export const Category = memo(
 					body: JSON.stringify({ id }),
 				}).then(refetch);
 			}
-		}
+		};
 
 		const handleToggle: MouseEventHandler<HTMLDetailsElement> = e => {
 			fetch('/api/edit/category', {
