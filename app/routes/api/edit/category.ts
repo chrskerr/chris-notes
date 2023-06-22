@@ -1,4 +1,4 @@
-import type { ActionFunction } from '@remix-run/node';
+import type { ActionFunction } from '@vercel/remix';
 
 import { db } from '~/utils/db.server';
 

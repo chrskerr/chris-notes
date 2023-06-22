@@ -1,6 +1,6 @@
-import type { LoaderFunction } from '@remix-run/node';
-import { redirect } from '@remix-run/node';
-import { json } from '@remix-run/node';
+import type { LoaderFunction } from '@vercel/remix';
+import { redirect } from '@vercel/remix';
+import { json } from '@vercel/remix';
 import { useLoaderData, useParams } from '@remix-run/react';
 
 import { useCallback, useEffect, useRef } from 'react';

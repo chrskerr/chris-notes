@@ -1,5 +1,5 @@
-import type { LoaderFunction } from '@remix-run/node';
-import { redirect } from '@remix-run/node';
+import type { LoaderFunction } from '@vercel/remix';
+import { redirect } from '@vercel/remix';
 import { db } from '~/utils/db.server';
 
 import { customAlphabet } from 'nanoid';
