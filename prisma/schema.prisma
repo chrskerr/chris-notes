@@ -1,23 +1,20 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
     provider = "prisma-client-js"
 }
 
 datasource db {
-    provider = "sqlite"
+    provider = "mongodb"
     url      = env("DATABASE_URL")
 }
 
 model Page {
-    id String @id @default(cuid())
+    id String @id @default(cuid()) @map("_id")
 
     categories Category[]
 }
 
 model Note {
-    id      String @id @default(cuid())
+    id      String @id @default(cuid()) @map("_id")
     content String @default("New task")
 
     categoryId String
@@ -32,7 +29,7 @@ model Note {
 }
 
 model Category {
-    id     String  @id @default(cuid())
+    id     String  @id @default(cuid()) @map("_id")
     title  String  @default("New category")
     isOpen Boolean @default(true)
     order  Int?
