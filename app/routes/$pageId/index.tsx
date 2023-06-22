@@ -38,7 +38,12 @@ export const loader: LoaderFunction = async ({ request, params }) => {
 			order: true,
 			createdAt: true,
 			notes: {
-				where: { completedAt: null },
+				where: {
+					OR: [
+						{ completedAt: { isSet: false } },
+						{ completedAt: null },
+					],
+				},
 				select: {
 					id: true,
 					content: true,
