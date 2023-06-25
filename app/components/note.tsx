@@ -5,7 +5,6 @@ import type {
 	MouseEventHandler,
 } from 'react';
 import { useEffect, useState } from 'react';
-import debounce from 'lodash/debounce';
 
 export type UINote = {
 	id: string;
@@ -25,8 +24,6 @@ function handleSave(id: string, newContent: string) {
 		body: JSON.stringify({ id, content: newContent }),
 	});
 }
-
-const debouncedHandleSave = debounce(handleSave, 5_000);
 
 const handleKeyDown: KeyboardEventHandler<HTMLSpanElement> = e => {
 	if (['Enter', 'Escape'].includes(e.key)) {
@@ -48,13 +45,6 @@ export function Note({ note, refetch }: Props) {
 	}, [content]);
 
 	useEffect(() => {
-		if (textContent !== content) {
-			debouncedHandleSave(id, textContent);
-		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [textContent]);
-
-	useEffect(() => {
 		setIsCompleted(!!note.completedAt);
 	}, [note.completedAt]);
 
@@ -63,7 +53,6 @@ export function Note({ note, refetch }: Props) {
 	}, [note.priority]);
 
 	const handleBlur: FocusEventHandler<HTMLSpanElement> = async e => {
-		await debouncedHandleSave.flush();
 		handleSave(id, e.currentTarget.innerText).then(refetch);
 	};
 

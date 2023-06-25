@@ -1,6 +1,5 @@
 import type { UINote } from './note';
 import { Note } from './note';
-import debounce from 'lodash/debounce';
 import type {
 	DragEventHandler,
 	KeyboardEventHandler,
@@ -27,8 +26,6 @@ function handleSave(id: string, newTitle: string) {
 	});
 }
 
-const debouncedHandleSave = debounce(handleSave, 5_000);
-
 const handleKeyDown: KeyboardEventHandler<HTMLSpanElement> = e => {
 	if (['Enter', 'Escape'].includes(e.key)) {
 		e.preventDefault();
@@ -52,13 +49,6 @@ export const Category = memo(
 		useEffect(() => {
 			setTitleContent(title);
 		}, [title]);
-
-		useEffect(() => {
-			if (titleContent !== title) {
-				debouncedHandleSave(id, titleContent);
-			}
-			// eslint-disable-next-line react-hooks/exhaustive-deps
-		}, [titleContent]);
 
 		function handleAdd() {
 			fetch('/api/create/note', {
