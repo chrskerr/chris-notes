@@ -1,3 +1,4 @@
+import { marked } from 'marked';
 import type {
 	DragEventHandler,
 	FocusEventHandler,
@@ -32,13 +33,16 @@ const handleKeyDown: KeyboardEventHandler<HTMLSpanElement> = e => {
 	}
 };
 
+type State = 'view' | 'edit' | 'loading';
+
 export function Note({ note, refetch }: Props) {
 	const { id, content } = note;
 	const [textContent, setTextContent] = useState(content);
 
 	const [isCompleted, setIsCompleted] = useState(!!note.completedAt);
 	const [priority, setPriority] = useState(note.priority);
-	const [isDeleting, setIsDeleting] = useState(false);
+
+	const [state, setState] = useState<State>('view');
 
 	useEffect(() => {
 		setTextContent(content);
@@ -52,8 +56,11 @@ export function Note({ note, refetch }: Props) {
 		setPriority(note.priority);
 	}, [note.priority]);
 
-	const handleBlur: FocusEventHandler<HTMLSpanElement> = async e => {
-		handleSave(id, e.currentTarget.innerText).then(refetch);
+	const handleBlur: FocusEventHandler<HTMLSpanElement> = async () => {
+		setState('loading');
+		handleSave(id, textContent)
+			.then(refetch)
+			.finally(() => setState('view'));
 	};
 
 	const handleDelete: MouseEventHandler<HTMLSpanElement> = e => {
@@ -62,7 +69,7 @@ export function Note({ note, refetch }: Props) {
 			`Are you sure you want to delete "${textContent}"?`,
 		);
 		if (shouldProceed) {
-			setIsDeleting(true);
+			setState('loading');
 			fetch('/api/delete/note', {
 				method: 'post',
 				body: JSON.stringify({ id }),
@@ -95,11 +102,16 @@ export function Note({ note, refetch }: Props) {
 		e.stopPropagation();
 	};
 
-	if (isDeleting) return null;
+	const startEditing: MouseEventHandler<HTMLDivElement> = e => {
+		if ((e.target as HTMLElement).tagName === 'A') return;
+
+		e.preventDefault();
+		setState('edit');
+	};
 
 	return (
 		<div
-			className={`flex items-center pl-[6px] pr-2 py-2 transition-colors rounded hover:bg-slate-100 [&:has(*:focus)]:bg-slate-100 sm:pr-4`}
+			className="note flex items-center pl-[6px] pr-2 py-2 transition-colors rounded hover:bg-slate-100 [&:has(*:focus)]:bg-slate-100 sm:pr-4"
 			onDragStart={handleDrag}
 			draggable={!isCompleted}
 		>
@@ -108,17 +120,30 @@ export function Note({ note, refetch }: Props) {
 				checked={isCompleted}
 				onChange={e => handleToggle(e.target.checked)}
 			/>
-			<span
-				className="flex-1 mx-4 outline-none word-break"
-				contentEditable
-				suppressContentEditableWarning
-				spellCheck
-				onInput={e => setTextContent(e.currentTarget.innerText)}
-				onKeyDown={handleKeyDown}
-				onBlur={handleBlur}
-			>
-				{content}
-			</span>
+			{state === 'edit' ? (
+				<input
+					autoFocus
+					type="text"
+					name="task_content"
+					spellCheck
+					className="flex-1 mx-4"
+					value={textContent}
+					onChange={e => setTextContent(e.target.value)}
+					onBlur={handleBlur}
+					onKeyDown={handleKeyDown}
+				/>
+			) : (
+				<span
+					className="flex-1 mx-4 outline-none cursor-pointer word-break"
+					onClick={startEditing}
+					dangerouslySetInnerHTML={{
+						__html: marked(textContent, {
+							mangle: false,
+							headerIds: false,
+						}),
+					}}
+				/>
+			)}
 			{priority && (
 				<select
 					value={[1, 2, 3].includes(priority) ? priority : 2}
@@ -132,12 +157,12 @@ export function Note({ note, refetch }: Props) {
 					<option value={3}>↓</option>
 				</select>
 			)}
-			<span
+			<button
 				onClick={handleDelete}
 				className="text-red-500 cursor-pointer"
 			>
-				x
-			</span>
+				{state === 'loading' ? '⏳' : 'x'}
+			</button>
 		</div>
 	);
 }

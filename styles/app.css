@@ -11,3 +11,7 @@
 		text-align-last: center;
 	}
 }
+
+.note a {
+	@apply underline;
+}

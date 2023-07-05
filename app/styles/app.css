@@ -793,6 +793,10 @@ video {
        text-align-last: center;
 }
 
+.note a {
+  text-decoration-line: underline;
+}
+
 .hover\:bg-slate-100:hover {
   --tw-bg-opacity: 1;
   background-color: rgb(241 245 249 / var(--tw-bg-opacity));
