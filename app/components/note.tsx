@@ -1,9 +1,11 @@
 import { marked } from 'marked';
 import type {
+	Dispatch,
 	DragEventHandler,
 	FocusEventHandler,
 	KeyboardEventHandler,
 	MouseEventHandler,
+	SetStateAction,
 } from 'react';
 import { useEffect, useState } from 'react';
 
@@ -56,7 +58,7 @@ export function Note({ note, refetch }: Props) {
 		setPriority(note.priority);
 	}, [note.priority]);
 
-	const handleBlur: FocusEventHandler<HTMLSpanElement> = async () => {
+	const handleBlur = async () => {
 		setState('loading');
 		handleSave(id, textContent)
 			.then(refetch)
@@ -121,16 +123,10 @@ export function Note({ note, refetch }: Props) {
 				onChange={e => handleToggle(e.target.checked)}
 			/>
 			{state === 'edit' ? (
-				<input
-					autoFocus
-					type="text"
-					name="task_content"
-					spellCheck
-					className="flex-1 mx-4"
-					value={textContent}
-					onChange={e => setTextContent(e.target.value)}
-					onBlur={handleBlur}
-					onKeyDown={handleKeyDown}
+				<Input
+					textContent={textContent}
+					setTextContent={setTextContent}
+					handleBlur={handleBlur}
 				/>
 			) : (
 				<span
@@ -164,5 +160,37 @@ export function Note({ note, refetch }: Props) {
 				{state === 'loading' ? '⏳' : 'x'}
 			</button>
 		</div>
+	);
+}
+
+function Input({
+	textContent,
+	setTextContent,
+	handleBlur,
+}: {
+	textContent: string;
+	setTextContent: Dispatch<SetStateAction<string>>;
+	handleBlur: () => void;
+}) {
+
+	useEffect(() => {
+		if (ref) {
+			ref.style.height = `0px`;
+			ref.style.height = `${ref.scrollHeight}px`;
+		}
+	}, [ref, textContent]);
+
+	return (
+		<textarea
+			ref={setRef}
+			autoFocus
+			name="task_content"
+			spellCheck
+			className="flex-1 mx-4"
+			value={textContent}
+			onChange={e => setTextContent(e.target.value)}
+			onBlur={handleBlur}
+			onKeyDown={handleKeyDown}
+		/>
 	);
 }
