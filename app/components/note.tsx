@@ -172,6 +172,7 @@ function Input({
 	setTextContent: Dispatch<SetStateAction<string>>;
 	handleBlur: () => void;
 }) {
+	const [ref, setRef] = useState<HTMLTextAreaElement | null>(null);
 
 	useEffect(() => {
 		if (ref) {
