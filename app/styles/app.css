@@ -610,6 +610,10 @@ video {
   flex: 1 1 0%;
 }
 
+.origin-center {
+  transform-origin: center;
+}
+
 .cursor-pointer {
   cursor: pointer;
 }
@@ -814,6 +818,16 @@ video {
 
 .hover\:underline:hover {
   text-decoration-line: underline;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.aria-\[busy\=true\]\:animate-spin[aria-busy=true] {
+  animation: spin 1s linear infinite;
 }
 
 @media (min-width: 640px) {

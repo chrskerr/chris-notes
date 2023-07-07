@@ -155,9 +155,10 @@ export function Note({ note, refetch }: Props) {
 			)}
 			<button
 				onClick={handleDelete}
-				className="text-red-500 cursor-pointer"
+				className="text-red-500 origin-center cursor-pointer aria-[busy=true]:animate-spin"
+				aria-busy={state === 'loading'}
 			>
-				{state === 'loading' ? '⏳' : 'x'}
+				x
 			</button>
 		</div>
 	);
