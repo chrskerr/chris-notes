@@ -45,16 +45,20 @@ export const Category = memo(
 
 		const [titleContent, setTitleContent] = useState(title);
 		const [isDraggedOver, setIsDraggedOver] = useState(false);
+		const [loading, setLoading] = useState(false);
 
 		useEffect(() => {
 			setTitleContent(title);
 		}, [title]);
 
 		function handleAdd() {
+			setLoading(true);
 			fetch('/api/create/note', {
 				method: 'post',
 				body: JSON.stringify({ id: id }),
-			}).then(refetch);
+			})
+				.then(refetch)
+				.finally(() => setLoading(false));
 		}
 
 		const handleDragOver: DragEventHandler<HTMLDetailsElement> = e => {
@@ -150,13 +154,14 @@ export const Category = memo(
 						<Note key={note.id} note={note} refetch={refetch} />
 					))}
 				</div>
-				<div
+				<button
+					aria-busy={loading}
 					onClick={handleAdd}
-					className="py-2 pl-1 pr-4 mt-2 transition-colors rounded cursor-pointer hover:bg-slate-100"
+					className="py-2 px-2 mt-2 transition-colors rounded cursor-pointer hover:bg-slate-100 aria-[busy=true]:cursor-not-allowed aria-[busy=true]:bg-gray-500"
 				>
 					<span className="mr-5">+</span>
 					<span>Add new note</span>
-				</div>
+				</button>
 			</details>
 		);
 	},
