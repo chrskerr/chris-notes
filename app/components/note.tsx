@@ -89,11 +89,14 @@ export function Note({ note, refetch }: Props) {
 
 	function handleChangePriority(priority: string) {
 		if (!isNaN(Number(priority)) && [1, 2, 3].includes(Number(priority))) {
+			setState('loading');
 			setPriority(Number(priority));
 			fetch('/api/edit/note', {
 				method: 'post',
 				body: JSON.stringify({ id, priority: Number(priority) }),
-			}).then(refetch);
+			})
+				.then(refetch)
+				.finally(() => setState('view'));
 		}
 	}
 
@@ -130,7 +133,7 @@ export function Note({ note, refetch }: Props) {
 				/>
 			) : (
 				<span
-					className="flex-1 mx-4 outline-none cursor-pointer word-break"
+					className="flex-1 mx-4 outline-none cursor-text word-break"
 					onClick={startEditing}
 					dangerouslySetInnerHTML={{
 						__html: marked(textContent, {
@@ -188,7 +191,7 @@ function Input({
 			autoFocus
 			name="task_content"
 			spellCheck
-			className="flex-1 mx-4"
+			className="flex-1 px-2 mx-2"
 			value={textContent}
 			onChange={e => setTextContent(e.target.value)}
 			onBlur={handleBlur}
