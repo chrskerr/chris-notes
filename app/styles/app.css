@@ -636,6 +636,10 @@ video {
   align-items: center;
 }
 
+.self-stretch {
+  align-self: stretch;
+}
+
 .rounded {
   border-radius: 0.25rem;
 }

@@ -7,7 +7,7 @@ import type {
 	MouseEventHandler,
 	SetStateAction,
 } from 'react';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 export type UINote = {
 	id: string;
@@ -57,6 +57,12 @@ export function Note({ note, refetch }: Props) {
 	useEffect(() => {
 		setPriority(note.priority);
 	}, [note.priority]);
+
+	useEffect(() => {
+		if (!note.content) {
+			setState('edit');
+		}
+	}, []);
 
 	const handleBlur = async () => {
 		setState('loading');
@@ -133,7 +139,7 @@ export function Note({ note, refetch }: Props) {
 				/>
 			) : (
 				<span
-					className="flex-1 mx-4 outline-none cursor-text word-break"
+					className="self-stretch flex-1 mx-4 outline-none cursor-text word-break"
 					onClick={startEditing}
 					dangerouslySetInnerHTML={{
 						__html: marked(textContent, {
@@ -176,18 +182,39 @@ function Input({
 	setTextContent: Dispatch<SetStateAction<string>>;
 	handleBlur: () => void;
 }) {
-	const [ref, setRef] = useState<HTMLTextAreaElement | null>(null);
+	const [node, setNode] = useState<HTMLTextAreaElement | null>(null);
+	const ref = useRef<HTMLTextAreaElement | null>(null);
 
 	useEffect(() => {
-		if (ref) {
-			ref.style.height = `0px`;
-			ref.style.height = `${ref.scrollHeight}px`;
+		if (node) {
+			node.style.height = `0px`;
+			node.style.height = `${node.scrollHeight}px`;
+			node.focus();
 		}
-	}, [ref, textContent]);
+		ref.current = node;
+	}, [node, textContent]);
+
+	useEffect(() => {
+		const onClickOutside = (e: Event) => {
+			if (
+				ref.current &&
+				e.target &&
+				!ref.current.contains(e.target as Node)
+			) {
+				ref.current.blur();
+			}
+		};
+
+		document.addEventListener('click', onClickOutside, false);
+
+		return () => {
+			document.removeEventListener('click', onClickOutside);
+		};
+	}, []);
 
 	return (
 		<textarea
-			ref={setRef}
+			ref={setNode}
 			autoFocus
 			name="task_content"
 			spellCheck
