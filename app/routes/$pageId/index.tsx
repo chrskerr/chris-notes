@@ -9,6 +9,8 @@ import { Categories } from '~/components/categories';
 import { useRefetch } from '~/components/useRefetch';
 import { db } from '~/utils/db.server';
 
+import { subHours } from 'date-fns';
+
 export type NoteType = {
 	id: string;
 	content: string;
@@ -42,6 +44,7 @@ export const loader: LoaderFunction = async ({ request, params }) => {
 					OR: [
 						{ completedAt: { isSet: false } },
 						{ completedAt: null },
+						{ completedAt: { gte: subHours(new Date(), 1) } },
 					],
 				},
 				select: {
@@ -50,7 +53,11 @@ export const loader: LoaderFunction = async ({ request, params }) => {
 					completedAt: true,
 					priority: true,
 				},
-				orderBy: [{ priority: 'asc' }, { createdAt: 'asc' }],
+				orderBy: [
+					{ completedAt: 'asc' },
+					{ priority: 'asc' },
+					{ createdAt: 'asc' },
+				],
 			},
 		},
 		where: { pageId },

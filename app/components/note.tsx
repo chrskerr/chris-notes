@@ -2,7 +2,6 @@ import { marked } from 'marked';
 import type {
 	Dispatch,
 	DragEventHandler,
-	FocusEventHandler,
 	KeyboardEventHandler,
 	MouseEventHandler,
 	SetStateAction,
@@ -139,7 +138,9 @@ export function Note({ note, refetch }: Props) {
 				/>
 			) : (
 				<span
-					className="self-stretch flex-1 mx-4 outline-none cursor-text word-break"
+					className={`self-stretch flex-1 mx-4 outline-none cursor-text word-break ${
+						note.completedAt ? 'line-through' : ''
+					}`}
 					onClick={startEditing}
 					dangerouslySetInnerHTML={{
 						__html: marked(textContent, {
