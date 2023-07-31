@@ -44,7 +44,7 @@ export const loader: LoaderFunction = async ({ request, params }) => {
 					OR: [
 						{ completedAt: { isSet: false } },
 						{ completedAt: null },
-						{ completedAt: { gte: subHours(new Date(), 1) } },
+						{ completedAt: { gte: subHours(new Date(), 9) } },
 					],
 				},
 				select: {
