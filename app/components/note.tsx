@@ -139,7 +139,7 @@ export function Note({ note, refetch }: Props) {
 			) : (
 				<span
 					className={`self-stretch flex-1 mx-4 outline-none cursor-text word-break ${
-						note.completedAt ? 'line-through' : ''
+						isCompleted ? 'line-through' : ''
 					}`}
 					onClick={startEditing}
 					dangerouslySetInnerHTML={{

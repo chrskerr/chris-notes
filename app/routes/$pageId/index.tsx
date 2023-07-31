@@ -52,17 +52,34 @@ export const loader: LoaderFunction = async ({ request, params }) => {
 					content: true,
 					completedAt: true,
 					priority: true,
+					createdAt: true,
 				},
-				orderBy: [
-					{ completedAt: 'asc' },
-					{ priority: 'asc' },
-					{ createdAt: 'asc' },
-				],
 			},
 		},
 		where: { pageId },
 		orderBy: { createdAt: 'asc' },
 	});
+
+	for (const category of data) {
+		category.notes.sort((a, b) => {
+			if (a.completedAt) {
+				if (b.completedAt) {
+					return b.completedAt.valueOf() - a.completedAt.valueOf();
+				}
+				return 1;
+			}
+
+			if (b.completedAt) {
+				return -1;
+			}
+
+			if (a.priority !== b.priority) {
+				return a.priority - b.priority;
+			}
+
+			return a.createdAt.valueOf() - b.createdAt.valueOf();
+		});
+	}
 
 	return json<CategorisedNotes>({
 		categories: data,
