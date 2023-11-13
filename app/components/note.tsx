@@ -94,10 +94,6 @@ export function Note({ note, refetch }: Props) {
 		}).then(refetch);
 	}
 
-	function handleChangePriority(priority: string) {
-		setPriority(priority);
-	}
-
 	function saveChangeOfPriority() {
 		if (isNaN(Number(priority))) {
 			return;
@@ -163,7 +159,12 @@ export function Note({ note, refetch }: Props) {
 			<input
 				value={priority}
 				type="number"
-				onChange={e => handleChangePriority(e.target.value)}
+				onChange={e => setPriority(e.target.value)}
+				onKeyUp={e => {
+					if (e.key === 'Enter') {
+						e.currentTarget.blur();
+					}
+				}}
 				onBlur={saveChangeOfPriority}
 				className="sm:mr-4 w-[2rem] mx-2 text-center bg-blue-100 cursor-pointer"
 			/>
