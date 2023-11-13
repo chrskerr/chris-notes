@@ -41,7 +41,9 @@ export function Note({ note, refetch }: Props) {
 	const [textContent, setTextContent] = useState(content);
 
 	const [isCompleted, setIsCompleted] = useState(!!note.completedAt);
-	const [priority, setPriority] = useState(note.priority);
+	const [priority, setPriority] = useState<string>(
+		note.priority?.toString() ?? '1',
+	);
 
 	const [state, setState] = useState<State>('view');
 
@@ -54,7 +56,7 @@ export function Note({ note, refetch }: Props) {
 	}, [note.completedAt]);
 
 	useEffect(() => {
-		setPriority(note.priority);
+		setPriority(note.priority?.toString() ?? '1');
 	}, [note.priority]);
 
 	useEffect(() => {
@@ -93,16 +95,24 @@ export function Note({ note, refetch }: Props) {
 	}
 
 	function handleChangePriority(priority: string) {
-		if (!isNaN(Number(priority)) && [1, 2, 3].includes(Number(priority))) {
-			setState('loading');
-			setPriority(Number(priority));
-			fetch('/api/edit/note', {
-				method: 'post',
-				body: JSON.stringify({ id, priority: Number(priority) }),
-			})
-				.then(refetch)
-				.finally(() => setState('view'));
+		setPriority(priority);
+	}
+
+	function saveChangeOfPriority() {
+		if (isNaN(Number(priority))) {
+			return;
 		}
+
+		setState('loading');
+		fetch('/api/edit/note', {
+			method: 'post',
+			body: JSON.stringify({
+				id,
+				priority: Math.max(Math.min(Number(priority), 999), 1),
+			}),
+		})
+			.then(refetch)
+			.finally(() => setState('view'));
 	}
 
 	const handleDrag: DragEventHandler<HTMLDivElement> = e => {
@@ -150,19 +160,13 @@ export function Note({ note, refetch }: Props) {
 					}}
 				/>
 			)}
-			{priority && (
-				<select
-					value={[1, 2, 3].includes(priority) ? priority : 2}
-					onChange={e => handleChangePriority(e.target.value)}
-					className={`sm:mr-4 w-[25px] aspect-square align-last-center mx-2 text-center bg-blue-100 appearance-none cursor-pointer ${
-						priority === 1 ? 'bg-pink-100' : ''
-					} ${priority === 3 ? 'bg-green-100' : ''}`}
-				>
-					<option value={1}>↑</option>
-					<option value={2}>·</option>
-					<option value={3}>↓</option>
-				</select>
-			)}
+			<input
+				value={priority}
+				type="number"
+				onChange={e => handleChangePriority(e.target.value)}
+				onBlur={saveChangeOfPriority}
+				className="sm:mr-4 w-[2rem] mx-2 text-center bg-blue-100 cursor-pointer"
+			/>
 			<button
 				onClick={handleDelete}
 				className="text-red-500 origin-center cursor-pointer aria-[busy=true]:animate-spin"

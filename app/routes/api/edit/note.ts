@@ -34,8 +34,7 @@ export const action: ActionFunction = async ({ request }) => {
 		});
 	}
 
-	if (body.priority && [1, 2, 3].includes(body.priority)) {
-		console.log(body.priority);
+	if (body.priority) {
 		await db.note.update({
 			where: { id: body.id },
 			data: { priority: body.priority },
