@@ -159,6 +159,7 @@ export function Note({ note, refetch }: Props) {
 			<input
 				value={priority}
 				type="number"
+				inputMode="decimal"
 				onChange={e => setPriority(e.target.value)}
 				onKeyUp={e => {
 					if (e.key === 'Enter') {
